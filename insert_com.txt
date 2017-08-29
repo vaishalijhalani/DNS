@@ -1,0 +1,9 @@
+www.com 12.12.12.15
+www.d.com 12.12.12.14
+www.c.d.com 12.12.12.12
+www.b.c.d.com 12.12.12.13
+www.a.b.c.d.com 127.339.123.679
+www.xyz.asd.com 45.23.12.56
+www.asd.com 12.15.18.19
+
+

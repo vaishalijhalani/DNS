@@ -1,0 +1,9 @@
+www.samsung.com 45.67.23.56 
+www.samsung.net 456.34.23.56 
+www.facebook.com 123.45.67.56
+www.google.com 111.45.75.55 
+www.youtube.com 56.78.84.58 
+www.comcom.com 45.58.48.220 
+www.google.com 345.45.23.45 
+www.samsung.com 45.67.23.56
+www.samsung.net 456.34.23.56 
