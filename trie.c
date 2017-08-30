@@ -22,6 +22,8 @@ void Insertdata (struct dnsnode * root, char * url,char *ip)
 	int i, index;
 	struct dnsnode * temp = root;
 
+	printf("\n%s %s\n", url,ip);
+
 
 	for(i=4;i<length;i++)
 	{
@@ -87,7 +89,7 @@ char* search (struct dnsnode * root, char *url)
 
 	}
 
-	printf("\n searching data....................\n");
+	printf("searching data\n");
 	//printf("%s\n",temp->ipaddress );
 	if(temp->flag && f) return temp->ipaddress;
 	else return NULL;
@@ -99,10 +101,15 @@ void insert_in_tree(struct dnsnode * root, char * file)
 {
 
 	char * url_insert, * ip_insert;
+
 	char line[50];
+
 	url_insert = (char*)malloc(50 * sizeof(char));
+
 	ip_insert = (char*)malloc(50 * sizeof(char));
+
  	FILE * file1 = fopen ( file, "r" );
+
  	int i, j, k, length;
 
 	while(fgets ( line, sizeof(line), file1)!= NULL ) 

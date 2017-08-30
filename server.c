@@ -21,70 +21,50 @@
 
 struct dnsnode* root;
 
-pthread_mutex_t lock;
-
 void * threadFunc(void * socket)
 {  
 		int Dest_port;
 		int new_socket = *(int*)socket;
-		char buffer[1024] = {0};
-		char * send_buffer = (char * )malloc(1024*sizeof(char));
-	    char * present = (char*) malloc(1024*sizeof(char));
-	    char * url = (char*) malloc(1024*sizeof(char));
+		char buffer[1024] = {0}, send_buffer[1024] = {0};
+		char * present = (char*) malloc(1024*sizeof(char));
+		char * url = (char*) malloc(1024*sizeof(char));
 		int x = read(new_socket, buffer,1024);
-		printf("\n\n\n %s is read by server\n", buffer);
-		present = search(root,buffer);
-
-		if(!present)
-		{
-			   printf("\n not present in server cache\n");
-			   //strcpy(url,buffer);
+			printf("%s is read by server...............................................\n", buffer);
+			present = search(root,buffer);
+			if(!present)
+			{
+			   printf("not present in server cache\n");
+			   strcpy(url,buffer);
 			   Dest_port = turn_clientmode_on_for_root(buffer, ROOT_PORT);
-			   printf("%d before send\n",Dest_port);
+			   //printf("%d before send\n",Dest_port);
 
-			   if(Dest_port!= -1)
-	  		   {
-	  				
-				   		present = turn_clientmode_on(buffer, Dest_port);
-				   		//printf("hello");
-				   		//printf("%s after turn on..............................", present);
-			
-
-						if(!strcmp(present,"N"))
-						{
-								//sprintf("\nsending the null value \n");
-								send(new_socket, present, 1024,0);
-						}
-							
-			            //printf("\n %s is return by com or in server\n",present);
-
-						else
-						{
-								pthread_mutex_lock(&lock);
-								printf("\ninsernt in tree\n");
-						   		Insertdata(root, url, present );
-						   		pthread_mutex_unlock(&lock);
-						   		send(new_socket, present, 1024,0);
-						}
-			   
+				if(Dest_port!= -1)
+	  			{
+			   		present = turn_clientmode_on(buffer, Dest_port);
+		
+			   		printf("%s is return by com or in server\n",present);
+			   		if(strlen(present)>2)
+			   				Insertdata(root, url, present );
+			   		send(new_socket, present, 1024,0);
 				}
 
 				else 
 				{
-				
-						present = "D";
-		                //printf("%s after search results in .in server\n",present);
-		                send(new_socket,present,1024, 0);
+					present = "D";
+                 
+                    //printf("%s after search results in .in server\n",present);
+                 	send(new_socket,present,1024, 0);
 				}		
 
 			}
-	else
-	{
-			fflush(stdout);
-		    //printf("IP returned from server cache");
-			send(new_socket, present, 1024, 0 );
-			printf("\n IP returned from server cache\n\n\n\n\n\n");
-	}
+			else
+			{
+				fflush(stdout);
+
+			    //printf("IP returned from server cache");
+				send(new_socket, present, 1024, 0 );
+				printf("IP returned from server cache\n");
+			}
 }
 
 int main(int argc, char const *argv[])
@@ -96,21 +76,15 @@ int main(int argc, char const *argv[])
 	//int i = 0, j = 0;
 	int new_socket,*new_sock;
 	root  = newnode();
+	
 	pthread_t pth;
     int rc; 
 	insert_in_tree(root,"insert.txt");
+
 	int server_fd, valread;
 	struct sockaddr_in address;
 	int opt = 1;
 	int addrlen = sizeof(address);
-
-
-	if (pthread_mutex_init(&lock, NULL) != 0)
-    {
-        printf("\n mutex init failed\n");
-        return 1;
-    }
-
    // Creating socket file descriptor
 	if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0)
 	{
@@ -143,26 +117,27 @@ int main(int argc, char const *argv[])
 	}
 
 	
+
 	while(1)
 	{ 
 		if ((new_socket = accept(server_fd, (struct sockaddr *)&address, 
 						   (socklen_t*)&addrlen))<0)
 		{
-				perror("accept");
-				exit(EXIT_FAILURE);
+			perror("accept");
+			exit(EXIT_FAILURE);
 		}
 	   
 		if(new_socket > 0 )
 		{
 
-				new_sock = malloc(sizeof *new_sock);
-	            *new_sock = new_socket;
-	            rc=pthread_create(&pth,NULL,threadFunc,(void *)new_sock);    
-	        
+			new_sock = malloc(sizeof *new_sock);
+            *new_sock = new_socket;
+            rc=pthread_create(&pth,NULL,threadFunc,(void *)new_sock);    
+        
 	
 			
 		}
-	}
+}
 
 	pthread_exit(NULL);
 	return 0;

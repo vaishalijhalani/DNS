@@ -24,19 +24,19 @@ void * threadFunc(void * socket)
     int new_socket = *(int*)socket;
     read(new_socket, buffer,1024);
     int iterate = atoi(buffer);
-    //printf("%d\n",iterate);
+            //printf("%d\n",iterate);
     buffer[0] ='\0';
     for(int i = 0 ; i < iterate ; i++)
     {
-
-            //printf("in the loop\n");
-            int x = read(new_socket, buffer,1024);
-            printf("%d bytes read in com server\n",x);
-            present = search(root_com,buffer);
-            if(!present)
-           	    present = "N";
-            //printf("%s after search results in .in server\n",buffer);
-            send(new_socket,present,1024, 0);
+                //printf("in the loop\n");
+                 
+        int x = read(new_socket, buffer,1024);
+        printf("%s after search results in .com server\n",buffer);
+        present = search(root_com,buffer);
+        if(!present)
+       	present = "not a valid url\n";
+                 //printf("%s after search results in .in server\n",buffer);
+        send(new_socket,present,1024, 0);
 
      }
  }
@@ -45,15 +45,17 @@ int main(int argc, char const *argv[])
 {
     
     //char buffer[1024] = {0};
-    pthread_t pth;
+
+     pthread_t pth;
     int rc; 
     root_com  = newnode();
+
     insert_in_tree(root_com,"insert_com.txt");
+
     int server_fd, new_socket, valread,*new_sock;
     struct sockaddr_in address;
     int opt = 1;
     int addrlen = sizeof(address);
-
      // Creating socket file descriptor
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0)
     {
@@ -97,12 +99,13 @@ int main(int argc, char const *argv[])
 
         if(new_socket>0)
         {
-
         	new_sock = malloc(sizeof *new_sock);
-            *new_sock = new_socket;
-            rc=pthread_create(&pth,NULL,threadFunc,(void *)new_sock);	
+         *new_sock = new_socket;
+         rc=pthread_create(&pth,NULL,threadFunc,(void *)new_sock);	
 
- 	    }
+ 	      
+
+        }
 }
      return 0;
 }

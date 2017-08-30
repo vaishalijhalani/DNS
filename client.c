@@ -17,7 +17,7 @@
 #include "trie.h"
 
 #define PORT 8080
-#define NUM 6
+#define NUM 5
 
 FILE * file2;
 
@@ -41,21 +41,24 @@ void * threadfunc( void * threadid)
 
     url_search[i1] = '\0';
 
+    //strcpy(url_search,p) ;
+
     send(sock,url_search ,1024, 0 );
     printf("\n msg sent by client\n");
-    while(read(sock, read_buffer,1024)<0);
+    read(sock, read_buffer,1024);
     //printf("\n %d after read value of x\n",x);
 
     if(!strcmp(read_buffer,"N"))
         
         printf("\n %s is not a valid url\n", url_search);
 
-    else if(!strcmp(read_buffer,"D\n"))
+    else if(!strcmp(read_buffer,"D"))
         
         printf("\n %s is not a valid domain\n", url_search);
+
     else
         
-        printf("\n %s is the ip address for %s returned by thread %d \n", read_buffer,url_search,thread);
+        printf("\n %s is the ip address for %s\n", read_buffer,url_search);
 
 }
   
@@ -63,22 +66,19 @@ int main(int argc, char const *argv[])
 {
     int i;
     int * i1 = malloc(sizeof *i1);
-    pthread_t pth;
     file2 = fopen ( "search.txt", "r" );
-
+    pthread_t pth;
     for(i=0 ; i<=NUM ; i++)
     {
         *i1 = i;
         if(pthread_create(&pth,NULL,threadfunc,(void *)i1)<0)
-            printf("\n thread is not created\n");
+            printf("thread is not created\n");
         
-        sleep(1);
+        sleep(2);
     }
 
 
    pthread_exit(NULL);
-
-   fclose(file2);
 
     return 0;
 }

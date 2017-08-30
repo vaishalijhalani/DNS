@@ -1,9 +1,10 @@
 www.in 67.12.34.56
 www.ac.in 67.12.34.57
 www.iitb.ac.in 234.456.567.678
-www.cse.iitb.ac.in 149.100.101.102
+www.cse.iitb.ac.in 123.234.189.789
 www.edu.in 67.12.34.58
 www.xyc.edu.in 56.34.12.78
 www.xyz.in 34.56.12.34
 www.abc.ac.in 23.23.23.231
 www.abc2.ac.in 23.23.23.233
+www.google.ac.in 568.100.100.100

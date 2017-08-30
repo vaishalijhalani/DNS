@@ -28,34 +28,36 @@ void * threadFunc(void * socket)
  
     for(int i = 0 ; i < iterate ; i++)
      {
-            //printf("in the loop");
-            //printf("before reading buffer");
-            int x = read(new_socket, buffer,1024);
-            //printf("%s\n",buffer);
-            present = search(root_in,buffer);
-            if(!present)
-            {
-                    present = "N";
-                    //printf("%s after search results in .in server\n",present);
-                    send(new_socket,present,1024, 0);
-            }  
-
-    }  
+                 //printf("in the loop");
+                 //memset(buffer,'\0',sizeof(buffer));
+                 //printf("before reading buffer");
+        int x = read(new_socket, buffer,1024);
+                 //printf("%s\n",buffer);
+         present = search(root_in,buffer);
+         if(!present)
+       	    present = "N";
+                 
+                 //printf("%s after search results in .in server\n",present);
+        send(new_socket,present,1024, 0);
+                 //memset(buffer,'\0',sizeof(buffer));
+            }    
 
 }
 
 int main(int argc, char const *argv[])
 {
     
+   // insert_in_tree(main_root,"insert_root.txt");
     root_in  = newnode();
+
     insert_in_tree(root_in,"insert_in.txt");
-    pthread_t pth;
+
+     pthread_t pth;
     int rc; 
     int server_fd, new_socket,*new_sock, valread;
     struct sockaddr_in address;
     int opt = 1;
     int addrlen = sizeof(address);
-
      // Creating socket file descriptor
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0)
     {
@@ -101,6 +103,7 @@ int main(int argc, char const *argv[])
 
         if(new_socket>0)
         {
+            //memset(buffer,'\0',sizeof(buffer));
            
         	new_sock = malloc(sizeof *new_sock);
             *new_sock = new_socket;

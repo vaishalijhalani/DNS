@@ -25,18 +25,16 @@ void * threadFunc(void * socket)
     int new_socket = *(int*)socket;
     buffer[0] = '\0';
 	int x = read(new_socket, buffer,1024);
-	printf("\n %s is the read data by root\n",buffer);
+	printf("%s is the read data by root\n",buffer);
+		    
 	present = search(main_root,buffer);
-    printf("\n %s after search results\n",present);
-    if (!present)
-    {
-            present = "D";
-            send(new_socket,present,1024, 0);   
-
-    }
+           
+    printf("\n%s after search results\n",present);
+    if (present)
+	send(new_socket,present,1024, 0);	
     else 
     {  
-    
+    present="D";
     send(new_socket,present,1024, 0);   
     }	 
 
@@ -52,12 +50,11 @@ int main(int argc, char const *argv[])
     main_root  = newnode();
     pthread_t pth;
     int rc; 
-    int opt=1;
+      int opt=1;
     // Creating socket file descriptor
     int server_fd, new_socket, valread,*new_sock;
     struct sockaddr_in address;
     int addrlen = sizeof(address);
-
      // Creating socket file descriptor
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0)
     {
@@ -103,10 +100,9 @@ int main(int argc, char const *argv[])
 
 	    if (new_socket>0)
 	    {
-
-	         new_sock = malloc(sizeof *new_sock);
-             *new_sock = new_socket;
-             rc=pthread_create(&pth,NULL,threadFunc,(void *)new_sock);	   
+	    new_sock = malloc(sizeof *new_sock);
+         *new_sock = new_socket;
+         rc=pthread_create(&pth,NULL,threadFunc,(void *)new_sock);	   
         }
 	    
 	}
