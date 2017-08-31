@@ -15,6 +15,9 @@
 #include <pthread.h>
 #include "trie.h"
 #include "connection.h"
+#include <errno.h>
+
+int errno;
 #define PORT 8080
 #define ROOT_PORT 8081
 
@@ -57,11 +60,14 @@ void * threadFunc(void * socket)
 				else if (Dest_port == 0)
 				{
 				    present = "D";
+				    //puts(present);
                  
                     //printf("\nnot a valid domain\n");
                     if(send(new_socket,present,1024, 0)==-1)
                     {
          		 			printf("\nsend failed in resolver\n");
+         		 			printf("an error: %s\n", strerror(errno));
+
          		 
          		    }
                  

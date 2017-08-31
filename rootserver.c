@@ -39,7 +39,7 @@ void * threadFunc(void * socket)
 
 
     snprintf (send_buffer, sizeof(send_buffer), "%d",dest_port);
-    //puts(send_buffer);
+    puts(send_buffer);
     send(new_socket,send_buffer,1024, 0);
 
 
