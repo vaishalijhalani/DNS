@@ -22,8 +22,6 @@ void Insertdata (struct dnsnode * root, char * url,char *ip)
 	int i, index;
 	struct dnsnode * temp = root;
 
-	printf("\n%s %s\n", url,ip);
-
 
 	for(i=4;i<length;i++)
 	{
@@ -69,7 +67,7 @@ char* search (struct dnsnode * root, char *url)
 
 	 if(url[i] != '.')
 
-			index = url[i]-'a';
+			index = url[i]-'a';//printf("\n value of index..............%d\n",index );}
 
 		else if (url[i] == '.')
 
@@ -79,7 +77,7 @@ char* search (struct dnsnode * root, char *url)
 		if((temp->alphabets[index]))
 		{
 			temp = temp->alphabets[index];
-			//printf("index for url %d %c\n", index,url[i]);
+			printf("index for url %d %c\n", index,url[i]);
 			f = 1;
 		}
 

@@ -30,7 +30,7 @@ int set_port(char * buffer)
     else if(strcmp(x, "com") == 0)
         return 9092;
     else 
-        return -1;
+        return 0;
 }
 
 
@@ -98,8 +98,8 @@ int turn_clientmode_on_for_root(char *buffer, int port)
     send(sock,final_buffer ,100, 0 );
     while(read(sock,read_buffer,1024)<0);
     printf("%s\n",read_buffer );
-    //printf("%s send by comserver\n",read_buffer);
-    int Dest_port = set_port(final_buffer);
+    //printf("%s send by rootserver\n",read_buffer);
+    int Dest_port = atoi(read_buffer);
     //turnon_client_mode(Dest_port);
     
     return Dest_port;
@@ -166,7 +166,7 @@ char * turn_clientmode_on(char *buffer, int port)
 
          	}
 
-        printf("data sent");
+        //printf("data sent");
         read(sock,read_buffer,1024);
         //printf("%s send by inserver\n",read_buffer);
 

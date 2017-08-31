@@ -17,7 +17,7 @@
 #include "trie.h"
 
 #define PORT 8080
-#define NUM 5
+#define NUM 70
 
 FILE * file2;
 
@@ -31,7 +31,7 @@ void * threadfunc( void * threadid)
     char line[1024] = {0};
     int sock = client_initialise(PORT);
     //printf("Enter url address for thread %d\n",thread);
-    int i1;
+    int i1,x;
     url_search = (char *)malloc(50*sizeof(char));
     fgets ( line, sizeof(line), file2);
             
@@ -41,12 +41,10 @@ void * threadfunc( void * threadid)
 
     url_search[i1] = '\0';
 
-    //strcpy(url_search,p) ;
-
     send(sock,url_search ,1024, 0 );
-    printf("\n msg sent by client\n");
-    read(sock, read_buffer,1024);
-    //printf("\n %d after read value of x\n",x);
+    //printf("\n msg sent by client\n");
+    while(read(sock, read_buffer,1024)<0);
+    //printf("\n %s after read \n",read_buffer);
 
     if(!strcmp(read_buffer,"N"))
         

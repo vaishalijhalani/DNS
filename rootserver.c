@@ -21,6 +21,7 @@ struct dnsnode* main_root;
 void * threadFunc(void * socket)
 {  
 	char buffer[1024] = {0}, send_buffer[1024] = {0};
+    int dest_port;
     char * present = (char*) malloc(1024*sizeof(char));
     int new_socket = *(int*)socket;
     buffer[0] = '\0';
@@ -29,14 +30,17 @@ void * threadFunc(void * socket)
 		    
 	present = search(main_root,buffer);
            
-    printf("\n%s after search results\n",present);
+    //printf("\n%s after search results\n",present);
     if (present)
-	send(new_socket,present,1024, 0);	
-    else 
-    {  
-    present="D";
-    send(new_socket,present,1024, 0);   
-    }	 
+       dest_port = set_port(buffer); 
+	
+    else if(!present)
+       dest_port = 0; 	 
+
+
+    snprintf (send_buffer, sizeof(send_buffer), "%d",dest_port);
+    //puts(send_buffer);
+    send(new_socket,send_buffer,1024, 0);
 
 
 }
@@ -80,7 +84,7 @@ int main(int argc, char const *argv[])
         perror("bind failed");
         exit(EXIT_FAILURE);
     }
-    if (listen(server_fd, 10) < 0)
+    if (listen(server_fd, 50) < 0)
     {
         perror("listen");
         exit(EXIT_FAILURE);
@@ -100,9 +104,10 @@ int main(int argc, char const *argv[])
 
 	    if (new_socket>0)
 	    {
-	    new_sock = malloc(sizeof *new_sock);
-         *new_sock = new_socket;
-         rc=pthread_create(&pth,NULL,threadFunc,(void *)new_sock);	   
+            printf("\nroot server data.........\n");
+	        new_sock = malloc(sizeof *new_sock);
+            *new_sock = new_socket;
+            rc=pthread_create(&pth,NULL,threadFunc,(void *)new_sock);	   
         }
 	    
 	}

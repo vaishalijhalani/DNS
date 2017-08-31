@@ -34,7 +34,7 @@ void * threadFunc(void * socket)
         printf("%s after search results in .com server\n",buffer);
         present = search(root_com,buffer);
         if(!present)
-       	present = "not a valid url\n";
+       	present = "N";
                  //printf("%s after search results in .in server\n",buffer);
         send(new_socket,present,1024, 0);
 
@@ -81,7 +81,7 @@ int main(int argc, char const *argv[])
         perror("bind failed");
         exit(EXIT_FAILURE);
     }
-    if (listen(server_fd, 10) < 0)
+    if (listen(server_fd, 50) < 0)
     {
         perror("listen");
         exit(EXIT_FAILURE);

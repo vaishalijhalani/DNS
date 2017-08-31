@@ -83,7 +83,7 @@ int main(int argc, char const *argv[])
         perror("bind failed");
         exit(EXIT_FAILURE);
     }
-    if (listen(server_fd, 10) < 0)
+    if (listen(server_fd, 50) < 0)
     {
         perror("listen");
         exit(EXIT_FAILURE);

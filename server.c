@@ -26,8 +26,8 @@ void * threadFunc(void * socket)
 		int Dest_port;
 		int new_socket = *(int*)socket;
 		char buffer[1024] = {0}, send_buffer[1024] = {0};
-		char * present = (char*) malloc(1024*sizeof(char));
-		char * url = (char*) malloc(1024*sizeof(char));
+	    char * present = (char*) malloc(1024*sizeof(char));
+	    char * url = (char*) malloc(1024*sizeof(char));
 		int x = read(new_socket, buffer,1024);
 			printf("%s is read by server...............................................\n", buffer);
 			present = search(root,buffer);
@@ -38,22 +38,34 @@ void * threadFunc(void * socket)
 			   Dest_port = turn_clientmode_on_for_root(buffer, ROOT_PORT);
 			   //printf("%d before send\n",Dest_port);
 
-				if(Dest_port!= -1)
+				if(Dest_port != 0)
 	  			{
-			   		present = turn_clientmode_on(buffer, Dest_port);
+		     	   
+                    present = turn_clientmode_on(buffer, Dest_port);
 		
-			   		printf("%s is return by com or in server\n",present);
-			   		if(strlen(present)>2)
-			   				Insertdata(root, url, present );
-			   		send(new_socket, present, 1024,0);
-				}
+			         //printf("%s is return by com or in server\n",present);
+			        if(present != "N")
+			   		    Insertdata(root, url, present );
+			        if(send(new_socket,present,1024, 0)==-1)
+                    {
+         		 			printf("\nsend failed in resolver\n");
+         		 
+         		    }
+				
+                }
 
-				else 
+				else if (Dest_port == 0)
 				{
-					present = "D";
+				    present = "D";
                  
-                    //printf("%s after search results in .in server\n",present);
-                 	send(new_socket,present,1024, 0);
+                    //printf("\nnot a valid domain\n");
+                    if(send(new_socket,present,1024, 0)==-1)
+                    {
+         		 			printf("\nsend failed in resolver\n");
+         		 
+         		    }
+                 
+                    //printf("\nafter send\n");
 				}		
 
 			}
@@ -110,7 +122,7 @@ int main(int argc, char const *argv[])
 		perror("bind failed");
 		exit(EXIT_FAILURE);
 	}
-	if (listen(server_fd, 10) < 0)
+	if (listen(server_fd, 50) < 0)
 	{
 		perror("listen");
 		exit(EXIT_FAILURE);
@@ -129,7 +141,7 @@ int main(int argc, char const *argv[])
 	   
 		if(new_socket > 0 )
 		{
-
+            printf("\ncreating new thread....\n");
 			new_sock = malloc(sizeof *new_sock);
             *new_sock = new_socket;
             rc=pthread_create(&pth,NULL,threadFunc,(void *)new_sock);    
