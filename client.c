@@ -17,7 +17,7 @@
 #include "trie.h"
 
 #define PORT 8080
-#define NUM 32
+#define NUM 129
 
 FILE * file2;
 
@@ -45,7 +45,7 @@ void * threadfunc( void * threadid)
     printf("\n msg sent by client\n");
     while(read(sock, read_buffer,1024)<0);
 
-    printf("\n %s after read \n",read_buffer);
+    //printf("\n %s after read \n",read_buffer);
 
     if(!strcmp(read_buffer,"N"))
         

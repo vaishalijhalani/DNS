@@ -39,7 +39,7 @@ void * threadFunc(void * socket)
 			   printf("not present in server cache\n");
 			   strcpy(url,buffer);
 			   Dest_port = turn_clientmode_on_for_root(buffer, ROOT_PORT);
-			   printf("%d before send\n",Dest_port);
+			   //printf("%d before send\n",Dest_port);
 
 				if(Dest_port != 0)
 	  			{
@@ -60,15 +60,15 @@ void * threadFunc(void * socket)
 				else if (Dest_port == 0)
 				{
 				    present = "D";
-				    puts(present);
-                 
-                    printf("\nnot a valid domain\n");
-                    //strerror(errno);
+				    //puts(present);
+                 	sleep(0.1);
+                    //printf("\nnot a valid domain\n");
+                    
                     int temp = write(new_socket,present,1024);
                     if(temp==-1)
                     {
          		 			printf("\nsend failed in resolver\n");
-                    		// strerror(errno);
+                    		//strerror(errno);
          		 			// printf("an error: %s\n", strerror(errno));
 
          		 
