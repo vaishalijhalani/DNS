@@ -39,6 +39,8 @@ void * threadFunc(void * socket)
         send(new_socket,present,1024, 0);
 
      }
+
+    close(new_socket);
  }
 
 int main(int argc, char const *argv[])

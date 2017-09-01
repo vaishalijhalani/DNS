@@ -40,7 +40,9 @@ void * threadFunc(void * socket)
                  //printf("%s after search results in .in server\n",present);
         send(new_socket,present,1024, 0);
                  //memset(buffer,'\0',sizeof(buffer));
-            }    
+            }   
+
+    close(new_socket); 
 
 }
 

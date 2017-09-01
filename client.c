@@ -17,14 +17,14 @@
 #include "trie.h"
 
 #define PORT 8080
-#define NUM 59
+#define NUM 32
 
 FILE * file2;
 
 void * threadfunc( void * threadid)
 {
 
-    //printf("\n\n\n hello.......\n");
+     printf("\n\n\n hello.......\n");
     int thread = *(int*)(threadid);
     char  * url_search  = malloc (1024 * sizeof(char));
     char read_buffer[1024] = {0};
@@ -42,10 +42,10 @@ void * threadfunc( void * threadid)
     url_search[i1] = '\0';
 
     send(sock,url_search ,1024, 0 );
-    //printf("\n msg sent by client\n");
+    printf("\n msg sent by client\n");
     while(read(sock, read_buffer,1024)<0);
 
-    //printf("\n %s after read \n",read_buffer);
+    printf("\n %s after read \n",read_buffer);
 
     if(!strcmp(read_buffer,"N"))
         
@@ -58,6 +58,8 @@ void * threadfunc( void * threadid)
     else
         
         printf("\n %s is the ip address for %s\n", read_buffer,url_search);
+
+    close(sock);
 
 }
   
