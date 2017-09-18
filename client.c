@@ -17,14 +17,14 @@
 #include "trie.h"
 
 #define PORT 8080
-#define NUM 129
+#define NUM 65
 
 FILE * file2;
 
 void * threadfunc( void * threadid)
 {
 
-     printf("\n\n\n hello.......\n");
+    printf("\n\n\n hello.......\n");
     int thread = *(int*)(threadid);
     char  * url_search  = malloc (1024 * sizeof(char));
     char read_buffer[1024] = {0};

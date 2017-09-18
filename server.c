@@ -68,7 +68,7 @@ void * threadFunc(void * socket)
                     if(temp==-1)
                     {
          		 			printf("\nsend failed in resolver\n");
-                    		//strerror(errno);
+                    		strerror(errno);
          		 			// printf("an error: %s\n", strerror(errno));
 
          		 
