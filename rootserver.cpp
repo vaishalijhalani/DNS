@@ -1,25 +1,17 @@
-#include <stdio.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <netdb.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <pthread.h>
-#include <unistd.h>
-#include <errno.h>
-#include <arpa/inet.h> 
-#include "trie.h"
+#include <bits/stdc++.h>
+#include <tr1/unordered_map>
 #include "connection.h"
+#include "hashmap.h"
+
+using namespace std::tr1;
 #define PORT 8081
 
 
-struct dnsnode* main_root;
+unordered_map <char *, char *> hash_root;
 
 void * threadFunc(void * socket)
 {  
+
 	char buffer[1024] = {0}, send_buffer[1024] = {0};
     int dest_port;
     char * present = (char*) malloc(1024*sizeof(char));
@@ -28,9 +20,9 @@ void * threadFunc(void * socket)
 	int x = read(new_socket, buffer,1024);
 	printf("%s is the read data by root\n",buffer);
 		    
-	present = search(main_root,buffer);
+	present = search(hash_root,buffer);
            
-    //printf("\n%s after search results\n",present);
+    //cout << present << "\n after search results\n";
     if (present)
        dest_port = set_port(buffer); 
 	
@@ -43,6 +35,7 @@ void * threadFunc(void * socket)
     send(new_socket,send_buffer,1024, 0);
     close(new_socket);
 
+
 }
 
 
@@ -51,10 +44,11 @@ int main(int argc, char const *argv[])
 
     
     //int i = 0, j = 0;
-    main_root  = newnode();
+    const char * file = (char*) malloc(1024*sizeof(char));
+    file = "root.txt";
     pthread_t pth;
     int rc; 
-      int opt=1;
+    int opt=1;
     // Creating socket file descriptor
     int server_fd, new_socket, valread,*new_sock;
     struct sockaddr_in address;
@@ -90,7 +84,7 @@ int main(int argc, char const *argv[])
         exit(EXIT_FAILURE);
     }
 
-    insert_in_tree(main_root,"root.txt");
+    insert_in_hash(hash_root, file);
 
 	while(1)
 	{
@@ -105,7 +99,7 @@ int main(int argc, char const *argv[])
 	    if (new_socket>0)
 	    {
             printf("\nroot server data.........\n");
-	        new_sock = malloc(sizeof *new_sock);
+	        new_sock = (int *)malloc(sizeof *new_sock);
             *new_sock = new_socket;
             rc=pthread_create(&pth,NULL,threadFunc,(void *)new_sock);	   
         }

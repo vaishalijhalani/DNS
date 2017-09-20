@@ -1,54 +1,41 @@
-// Server side C/C++ program to demonstrate Socket programming
-#include <stdio.h>
-
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <netdb.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <unistd.h>
-#include <errno.h>
-#include <arpa/inet.h> 
-#include <pthread.h>
-#include "trie.h"
+#include <bits/stdc++.h>
+#include <tr1/unordered_map>
 #include "connection.h"
-#include <errno.h>
+#include "hashmap.h"
+
+using namespace std::tr1;
 
 int errno;
 #define PORT 8080
 #define ROOT_PORT 8081
 
-
-struct dnsnode* root;
+unordered_map<char * , char *> hash_server;
 
 void * threadFunc(void * socket)
 {  
 		int Dest_port;
 		int new_socket = *(int*)socket;
 		char buffer[1024] = {0}, send_buffer[1024] = {0};
-	    char * present = (char*) malloc(1024*sizeof(char));
+	    const char * present = (char*) malloc(1024*sizeof(char));
 	    char * url = (char*) malloc(1024*sizeof(char));
 		int x = read(new_socket, buffer,1024);
-			printf("%s is read by server...............................................\n", buffer);
-			present = search(root,buffer);
+			std::cout << buffer <<  " is read by server...............................................\n";
+			present = search(hash_server,buffer);
 			if(!present)
 			{
 			   printf("not present in server cache\n");
 			   strcpy(url,buffer);
 			   Dest_port = turn_clientmode_on_for_root(buffer, ROOT_PORT);
-			   //printf("%d before send\n",Dest_port);
+			   //cout << Dest_port << " before send\n";
 
 				if(Dest_port != 0)
 	  			{
 		     	   
                     present = turn_clientmode_on(buffer, Dest_port);
 		
-			         //printf("%s is return by com or in server\n",present);
+			         //cout << present <<  " is return by com or in server\n";
 			        if(present != "N")
-			   		    Insertdata(root, url, present );
+			   		hash_server.insert(std::make_pair(url, present));;
 			        if(send(new_socket,present,1024, 0)==-1)
                     {
          		 			printf("\nsend failed in resolver\n");
@@ -62,19 +49,19 @@ void * threadFunc(void * socket)
 				    present = "D";
 				    //puts(present);
                  	sleep(0.1);
-                    //printf("\nnot a valid domain\n");
+                    //cout << "\nnot a valid domain\n";
                     
                     int temp = write(new_socket,present,1024);
                     if(temp==-1)
                     {
          		 			printf("\nsend failed in resolver\n");
                     		strerror(errno);
-         		 			// printf("an error: %s\n", strerror(errno));
+         		 			// cout << "an error: << strerror(errno) <<  "\n";
 
          		 
          		    }
                  
-                    //printf("\nafter send\n");
+                    //cout << "\nafter send\n";
 				}		
 
 			}
@@ -82,7 +69,7 @@ void * threadFunc(void * socket)
 			{
 				fflush(stdout);
 
-			    //printf("IP returned from server cache");
+			    //cout << "\n IP returned from server cache";
 				send(new_socket, present, 1024, 0 );
 				printf("IP returned from server cache\n");
 			}
@@ -98,11 +85,11 @@ int main(int argc, char const *argv[])
 	//char * root_buffer = (char*) malloc(1024*sizeof(char));
 	//int i = 0, j = 0;
 	int new_socket,*new_sock;
-	root  = newnode();
-	
+	const char * file = (char*) malloc(1024*sizeof(char));
+    file = "insert.txt";
 	pthread_t pth;
     int rc; 
-	insert_in_tree(root,"insert.txt");
+	insert_in_hash(hash_server,file);
 
 	int server_fd, valread;
 	struct sockaddr_in address;
@@ -152,8 +139,8 @@ int main(int argc, char const *argv[])
 	   
 		if(new_socket > 0 )
 		{
-            printf("\ncreating new thread....\n");
-			new_sock = malloc(sizeof *new_sock);
+            std::cout << "\ncreating new thread....\n";
+			new_sock = (int*)malloc(sizeof *new_sock);
             *new_sock = new_socket;
             rc=pthread_create(&pth,NULL,threadFunc,(void *)new_sock);    
         

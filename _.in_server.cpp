@@ -1,43 +1,34 @@
-#include <stdio.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <netdb.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <unistd.h>
-#include <errno.h>
-#include <arpa/inet.h> 
-#include <pthread.h>
-#include "trie.h"
+#include <bits/stdc++.h>
+#include <tr1/unordered_map>
 #include "connection.h"
+#include "hashmap.h"
+
+using namespace std::tr1;
 #define PORT 9091
 
 
-struct dnsnode* root_in;
+unordered_map<char * , char *> hash_in;
 
 void * threadFunc(void * socket)
 {  
 	char buffer[1024] = {0}, send_buffer[1024] = {0};
-    char * present = (char*) malloc(1024*sizeof(char));
+    const char * present = (char*) malloc(1024*sizeof(char));
     int new_socket = *(int*)socket;
  	read(new_socket, buffer,1024);
     int iterate = atoi(buffer);
  
     for(int i = 0 ; i < iterate ; i++)
      {
-                 //printf("in the loop");
+                 //cout << "in the loop";
                  //memset(buffer,'\0',sizeof(buffer));
-                 //printf("before reading buffer");
+                 //cout << "before reading buffer";
         int x = read(new_socket, buffer,1024);
-                 //printf("%s\n",buffer);
-         present = search(root_in,buffer);
+                 //cout << buffer << endl;
+         present = search(hash_in,buffer);
          if(!present)
        	    present = "N";
                  
-                 //printf("%s after search results in .in server\n",present);
+                 //cout << present << " after search results in .in server\n";
         send(new_socket,present,1024, 0);
                  //memset(buffer,'\0',sizeof(buffer));
             }   
@@ -49,12 +40,12 @@ void * threadFunc(void * socket)
 int main(int argc, char const *argv[])
 {
     
-   // insert_in_tree(main_root,"insert_root.txt");
-    root_in  = newnode();
+    const char * file = (char*) malloc(1024*sizeof(char));
+    file = "insert_in.txt";
 
-    insert_in_tree(root_in,"insert_in.txt");
+    insert_in_hash(hash_in,file);
 
-     pthread_t pth;
+    pthread_t pth;
     int rc; 
     int server_fd, new_socket,*new_sock, valread;
     struct sockaddr_in address;
@@ -107,7 +98,7 @@ int main(int argc, char const *argv[])
         {
             //memset(buffer,'\0',sizeof(buffer));
            
-        	new_sock = malloc(sizeof *new_sock);
+        	new_sock = (int*)malloc(sizeof *new_sock);
             *new_sock = new_socket;
             rc=pthread_create(&pth,NULL,threadFunc,(void *)new_sock);  
         }

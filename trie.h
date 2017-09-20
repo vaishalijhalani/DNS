@@ -1,26 +1,14 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdbool.h>
+
+#include <bits/stdc++.h>
+
+#ifndef _hashmap_h
+#define _hashmap_h
 
 
-#ifndef _trie_h
-#define _trie_h
 
-struct dnsnode
-{
-	struct dnsnode *alphabets[27];
-	char * ipaddress;
-	bool flag;
 
-};
+char * search (unordered_map <char * , char *> hashmap, char *url);  //Search in dns cache
 
-struct dnsnode * newnode(); //allocate the memory to a new node
-
-void Insertdata (struct dnsnode * root, char * url,char *ip);  //Insertion in dns cache
-
-char * search (struct dnsnode * root, char *url);  //Search in dns cache
-
-void insert_in_tree(struct dnsnode * root, char * file); //insert data in tree
+void insert_in_hash (unordered_map <char * , char *> hashmap, char * file); //insert data in hash
 
 #endif

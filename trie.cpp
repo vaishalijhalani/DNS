@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <map>
 #include <string.h>
 #include <stdbool.h>
 #include "trie.h" 

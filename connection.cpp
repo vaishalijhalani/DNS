@@ -1,18 +1,9 @@
-
-#include <stdlib.h>
-#include <stdio.h>
-
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <netdb.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdbool.h>
-#include <unistd.h>
-#include <errno.h>
-#include <arpa/inet.h> 
+#include <bits/stdc++.h>
+#include <map>
 #include "connection.h"
+#include "hashmap.h"
+
+using namespace std;
 
 
 
@@ -42,7 +33,7 @@ int  client_initialise(int port)
         
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
-        printf("\n Socket creation error \n");
+        cout << "\n Socket creation error \n";
         return -1;
     }
   
@@ -54,13 +45,13 @@ int  client_initialise(int port)
     // Convert IPv4 and IPv6 addresses from text to binary form
     if(inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr)<=0) 
     {
-        printf("\nInvalid address/ Address not supported \n");
+        cout << "\nInvalid address/ Address not supported \n";
         return -1;
     }
   
     if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
     {
-        printf("\nConnection Failed \n");
+        cout << "\nConnection Failed \n";
         return -1;
     }
 
@@ -82,11 +73,11 @@ int turn_clientmode_on_for_root(char *buffer, int port)
     char * read_buffer = (char*) malloc(1024*sizeof(char));
     int i , j;
 
-    //printf("%s turn client mode on",buffer);
+    //cout << buffer <<  " turn client mode on" << endl;
 
     for(i = (strlen(buffer)-1) ; i>0 ; i--)
     	if(buffer[i] == '.') break;
-    //printf("%d is index before com\n", i);
+    //cout << i << " is index before com\n";
 
     final_buffer[0] = 'w';final_buffer[1] = 'w'; final_buffer[2] = 'w';
     for(j = 3; buffer[i] != '\0' ; j++,i++ )
@@ -94,11 +85,11 @@ int turn_clientmode_on_for_root(char *buffer, int port)
 
 	final_buffer[j] = '\0';
 
-    //printf("%s turn client mode on",final_buffer);
+    //cout << final_buffer << " turn client mode on";
     send(sock,final_buffer ,100, 0 );
     while(read(sock,read_buffer,1024)<0);
     printf("%s\n",read_buffer );
-    //printf("%s send by rootserver\n",read_buffer);
+    //cout << read_buffer <<  " send by rootserver\n";
     int Dest_port = atoi(read_buffer);
     //turnon_client_mode(Dest_port);
     close(sock);

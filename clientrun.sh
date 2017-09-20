@@ -1,6 +1,6 @@
-gcc -c client.c
-gcc -c connection.c
-gcc -c trie.c
-gcc trie.o connection.o client.o -pthread -o client
+g++ -c -std=c++11 client.cpp
+g++ -c -std=c++11 connection.cpp
+g++ -c -std=c++11 hashmap.cpp
+g++ hashmap.o connection.o client.o -pthread -o client
 ./client
 

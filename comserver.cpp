@@ -1,41 +1,32 @@
-#include <stdio.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <netdb.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <unistd.h>
-#include <errno.h>
-#include <arpa/inet.h> 
-#include <pthread.h>
-#include "trie.h"
+#include <bits/stdc++.h>
+#include <tr1/unordered_map>
 #include "connection.h"
+#include "hashmap.h"
+
+using namespace std::tr1;
 #define PORT 9092
 
-struct dnsnode* root_com;
+unordered_map<char * , char *> hash_com;
 
 void * threadFunc(void * socket)
 {  
 	char buffer[1024] = {0}, send_buffer[1024] = {0};
-    char * present = (char*) malloc(1024*sizeof(char));
+    const char * present = (char*) malloc(1024*sizeof(char));
     int new_socket = *(int*)socket;
     read(new_socket, buffer,1024);
     int iterate = atoi(buffer);
-            //printf("%d\n",iterate);
+            //cout << iterate << endl;
     buffer[0] ='\0';
     for(int i = 0 ; i < iterate ; i++)
     {
-                //printf("in the loop\n");
+                //cout << "in the loop\n";
                  
         int x = read(new_socket, buffer,1024);
         printf("%s after search results in .com server\n",buffer);
-        present = search(root_com,buffer);
+        present = search(hash_com,buffer);
         if(!present)
        	present = "N";
-                 //printf("%s after search results in .in server\n",buffer);
+                 //cout << buffer << " after search results in .in server\n";
         send(new_socket,present,1024, 0);
 
      }
@@ -46,13 +37,13 @@ void * threadFunc(void * socket)
 int main(int argc, char const *argv[])
 {
     
-    //char buffer[1024] = {0};
-
-     pthread_t pth;
+    
+    const char * file = (char*) malloc(1024*sizeof(char));
+    file = "insert_com.txt";
+    pthread_t pth;
     int rc; 
-    root_com  = newnode();
 
-    insert_in_tree(root_com,"insert_com.txt");
+    insert_in_hash(hash_com,file);
 
     int server_fd, new_socket, valread,*new_sock;
     struct sockaddr_in address;
@@ -101,7 +92,7 @@ int main(int argc, char const *argv[])
 
         if(new_socket>0)
         {
-        	new_sock = malloc(sizeof *new_sock);
+        	new_sock = (int *)malloc(sizeof *new_sock);
          *new_sock = new_socket;
          rc=pthread_create(&pth,NULL,threadFunc,(void *)new_sock);	
 
