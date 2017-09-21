@@ -1,38 +1,52 @@
-#include <bits/stdc++.h>
-#include <tr1/unordered_map>
+#include <stdio.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <unistd.h>
+#include <errno.h>
+#include <arpa/inet.h> 
+#include <pthread.h>
+#include <iostream>
+#include <unordered_map>
 #include "connection.h"
 #include "hashmap.h"
 
-using namespace std::tr1;
+using namespace std;
 #define PORT 8081
 
 
-unordered_map <char *, char *> hash_root;
+unordered_map <std::string, std::string> hash_root;
 
 void * threadFunc(void * socket)
 {  
 
-	char buffer[1024] = {0}, send_buffer[1024] = {0};
+	char buffer[1024] = {0}, send_buffer1[1024] = {0};
     int dest_port;
-    char * present = (char*) malloc(1024*sizeof(char));
+    //char * present = (char*) malloc(1024*sizeof(char));
+    std::string present(1024,0);
     int new_socket = *(int*)socket;
     buffer[0] = '\0';
 	int x = read(new_socket, buffer,1024);
 	printf("%s is the read data by root\n",buffer);
-		    
-	present = search(hash_root,buffer);
+	std::string send_buffer(buffer);
+	present = search(hash_root,send_buffer);
            
-    //cout << present << "\n after search results\n";
-    if (present)
+    cout << present << "\n after search results\n";
+    if (!present.empty())
        dest_port = set_port(buffer); 
 	
-    else if(!present)
+    else
        dest_port = 0; 	 
 
 
-    snprintf (send_buffer, sizeof(send_buffer), "%d",dest_port);
-    puts(send_buffer);
-    send(new_socket,send_buffer,1024, 0);
+    snprintf (send_buffer1, sizeof(send_buffer1), "%d",dest_port);
+    puts(send_buffer1);
+    send(new_socket,send_buffer1,1024, 0);
     close(new_socket);
 
 
@@ -85,6 +99,10 @@ int main(int argc, char const *argv[])
     }
 
     insert_in_hash(hash_root, file);
+    cout << "values in hashmap\n";
+    for(unordered_map<std::string,std::string>::iterator it = hash_root.begin(); it != hash_root.end(); ++it) {
+ 
+        cout <<"value in hash\n" << it->first << " " << it->second;}
 
 	while(1)
 	{

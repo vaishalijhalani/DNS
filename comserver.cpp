@@ -1,33 +1,49 @@
-#include <bits/stdc++.h>
-#include <tr1/unordered_map>
+#include <stdio.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <unistd.h>
+#include <errno.h>
+#include <arpa/inet.h> 
+#include <pthread.h>
+#include <iostream>
+#include <unordered_map>
 #include "connection.h"
 #include "hashmap.h"
 
-using namespace std::tr1;
+using namespace std;
 #define PORT 9092
 
-unordered_map<char * , char *> hash_com;
+unordered_map<std::string, std::string> hash_com;
 
 void * threadFunc(void * socket)
 {  
-	char buffer[1024] = {0}, send_buffer[1024] = {0};
-    const char * present = (char*) malloc(1024*sizeof(char));
+	char buffer[1024] = {0};
+    std::string present;
+    present.reserve(1024);
     int new_socket = *(int*)socket;
     read(new_socket, buffer,1024);
     int iterate = atoi(buffer);
-            //cout << iterate << endl;
+    //cout << iterate << endl;
     buffer[0] ='\0';
     for(int i = 0 ; i < iterate ; i++)
     {
-                //cout << "in the loop\n";
-                 
+                
+        //cout << "in the loop\n"; 
         int x = read(new_socket, buffer,1024);
         printf("%s after search results in .com server\n",buffer);
-        present = search(hash_com,buffer);
-        if(!present)
+        std::string send_buffer(buffer);
+        present = search(hash_com,send_buffer);
+        if(present.empty())
        	present = "N";
-                 //cout << buffer << " after search results in .in server\n";
-        send(new_socket,present,1024, 0);
+        //cout << buffer << " after search results in .in server\n";
+        char * send_to_server = &present[0];
+        send(new_socket,send_to_server,1024, 0);
 
      }
 
@@ -44,6 +60,9 @@ int main(int argc, char const *argv[])
     int rc; 
 
     insert_in_hash(hash_com,file);
+    cout << "values in hashmap\n";
+    for(unordered_map<std::string,std::string>::iterator it = hash_com.begin(); it != hash_com.end(); ++it) {
+        cout <<"value in hash\n" << it->first << " " << it->second;}
 
     int server_fd, new_socket, valread,*new_sock;
     struct sockaddr_in address;

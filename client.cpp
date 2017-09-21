@@ -1,13 +1,26 @@
-#include <bits/stdc++.h>
-#include <tr1/unordered_map>
+#include <stdio.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <unistd.h>
+#include <errno.h>
+#include <arpa/inet.h> 
+#include <pthread.h>
+#include <iostream>
+//#include <unordered_map>
 #include "connection.h"
 #include "hashmap.h"
 
-using namespace std::tr1;
 using namespace std;
 
+
 #define PORT 8080
-#define NUM 1
+#define NUM 5
 
 FILE * file2;
 
@@ -29,7 +42,7 @@ void * threadfunc( void * threadid)
             url_search[i1] = line[i1];
 
     url_search[i1] = '\0';
-
+    cout << url_search;
     send(sock,url_search ,1024, 0);
     std::cout << "\n msg sent by client\n";
     while(read(sock, read_buffer,1024)<0);

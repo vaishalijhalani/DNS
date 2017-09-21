@@ -1,30 +1,51 @@
-#include <bits/stdc++.h>
-#include <tr1/unordered_map>
+#include <stdio.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <unistd.h>
+#include <errno.h>
+#include <arpa/inet.h> 
+#include <pthread.h>
+#include <iostream>
+#include <unordered_map>
 #include "connection.h"
 #include "hashmap.h"
 
-using namespace std::tr1;
+using namespace std;
+
 
 int errno;
 #define PORT 8080
 #define ROOT_PORT 8081
 
-unordered_map<char * , char *> hash_server;
+unordered_map<std::string, std::string> hash_server;
 
 void * threadFunc(void * socket)
 {  
 		int Dest_port;
 		int new_socket = *(int*)socket;
-		char buffer[1024] = {0}, send_buffer[1024] = {0};
-	    const char * present = (char*) malloc(1024*sizeof(char));
-	    char * url = (char*) malloc(1024*sizeof(char));
-		int x = read(new_socket, buffer,1024);
-			std::cout << buffer <<  " is read by server...............................................\n";
-			present = search(hash_server,buffer);
-			if(!present)
-			{
+		char * buffer = (char*) malloc(1024*sizeof(char));
+		char * send_to_client = (char*) malloc(1024*sizeof(char));
+		std::string present(1024,0);
+	    //buffer.reserve(1024);
+	    //send_buffer.reserve(1024);
+	    present.reserve(1024);
+
+		int x = read(new_socket,buffer,1024);
+		std::cout << buffer << x << " " << " is read by server...............................................\n";
+		std::string send_buffer(buffer);
+		present = search(hash_server,send_buffer);
+
+
+		if(present.empty())
+		{
+
 			   printf("not present in server cache\n");
-			   strcpy(url,buffer);
 			   Dest_port = turn_clientmode_on_for_root(buffer, ROOT_PORT);
 			   //cout << Dest_port << " before send\n";
 
@@ -35,8 +56,8 @@ void * threadFunc(void * socket)
 		
 			         //cout << present <<  " is return by com or in server\n";
 			        if(present != "N")
-			   		hash_server.insert(std::make_pair(url, present));;
-			        if(send(new_socket,present,1024, 0)==-1)
+			   		hash_server.insert(std::make_pair(buffer, present));
+			        if(send(new_socket,present.c_str(),1024, 0)==-1)
                     {
          		 			printf("\nsend failed in resolver\n");
          		 
@@ -47,11 +68,11 @@ void * threadFunc(void * socket)
 				else if (Dest_port == 0)
 				{
 				    present = "D";
-				    //puts(present);
-                 	sleep(0.1);
+				    
+                 	//sleep(0.1);
                     //cout << "\nnot a valid domain\n";
                     
-                    int temp = write(new_socket,present,1024);
+                    int temp = write(new_socket,present.c_str(),1024);
                     if(temp==-1)
                     {
          		 			printf("\nsend failed in resolver\n");
@@ -67,10 +88,11 @@ void * threadFunc(void * socket)
 			}
 			else
 			{
-				fflush(stdout);
+				
 
-			    //cout << "\n IP returned from server cache";
-				send(new_socket, present, 1024, 0 );
+			    std::cout << "\n IP returned from server cache";
+			    send_to_client = &present[0]; 
+				send(new_socket,send_to_client , 1024, 0 );
 				printf("IP returned from server cache\n");
 			}
 
@@ -90,6 +112,11 @@ int main(int argc, char const *argv[])
 	pthread_t pth;
     int rc; 
 	insert_in_hash(hash_server,file);
+
+	cout << "values in hashmap\n";
+	for(unordered_map<std::string,std::string>::iterator it = hash_server.begin(); it != hash_server.end(); ++it) {
+ 
+        cout <<"value in hash\n" << it->first << " " << it->second;}
 
 	int server_fd, valread;
 	struct sockaddr_in address;
