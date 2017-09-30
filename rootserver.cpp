@@ -32,11 +32,11 @@ void * threadFunc(void * socket)
     int new_socket = *(int*)socket;
     buffer[0] = '\0';
 	int x = read(new_socket, buffer,1024);
-	printf("%s is the read data by root\n",buffer);
+	//printf("%s is the read data by root\n",buffer);
 	std::string send_buffer(buffer);
 	present = search(hash_root,send_buffer);
            
-    cout << present << "\n after search results\n";
+    //cout << present << "\n after search results\n";
     if (!present.empty())
        dest_port = set_port(buffer); 
 	
@@ -48,6 +48,8 @@ void * threadFunc(void * socket)
     puts(send_buffer1);
     send(new_socket,send_buffer1,1024, 0);
     close(new_socket);
+    //shutdown(new_socket,SHUT_RDWR);
+    
 
 
 }
@@ -92,17 +94,17 @@ int main(int argc, char const *argv[])
         perror("bind failed");
         exit(EXIT_FAILURE);
     }
-    if (listen(server_fd, 50) < 0)
+    if (listen(server_fd, 100000) < 0)
     {
         perror("listen");
         exit(EXIT_FAILURE);
     }
 
     insert_in_hash(hash_root, file);
-    cout << "values in hashmap\n";
-    for(unordered_map<std::string,std::string>::iterator it = hash_root.begin(); it != hash_root.end(); ++it) {
+   // cout << "values in hashmap\n";
+    //for(unordered_map<std::string,std::string>::iterator it = hash_root.begin(); it != hash_root.end(); ++it) {
  
-        cout <<"value in hash\n" << it->first << " " << it->second;}
+      //  cout <<"value in hash\n" << it->first << " " << it->second;}
 
 	while(1)
 	{
@@ -116,7 +118,7 @@ int main(int argc, char const *argv[])
 
 	    if (new_socket>0)
 	    {
-            printf("\nroot server data.........\n");
+            //printf("\nroot server data.........\n");
 	        new_sock = (int *)malloc(sizeof *new_sock);
             *new_sock = new_socket;
             rc=pthread_create(&pth,NULL,threadFunc,(void *)new_sock);	   

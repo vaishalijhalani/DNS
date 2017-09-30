@@ -88,11 +88,13 @@ int turn_clientmode_on_for_root(char *buffer, int port)
     //cout << final_buffer << " turn client mode on";
     send(sock,final_buffer ,100, 0 );
     while(read(sock,read_buffer,1024)<0);
-    printf("%s\n",read_buffer );
+    //printf("%s\n",read_buffer );
     //cout << read_buffer <<  " send by rootserver\n";
     int Dest_port = atoi(read_buffer);
     //turnon_client_mode(Dest_port);
     close(sock);
+    //shutdown(sock,SHUT_RDWR);
+    
     return Dest_port;
 }
 
@@ -164,5 +166,7 @@ char * turn_clientmode_on(char *buffer, int port)
     }
     
     close(sock);
+    //shutdown(sock, SHUT_RDWR);
+    
     return read_buffer;
 }

@@ -23,6 +23,8 @@ int errno;
 #define PORT 8080
 #define ROOT_PORT 8081
 
+pthread_mutex_t lock;
+
 unordered_map<std::string, std::string> hash_server;
 
 void * threadFunc(void * socket)
@@ -36,8 +38,9 @@ void * threadFunc(void * socket)
 	    //send_buffer.reserve(1024);
 	    present.reserve(1024);
 
+	    clock_t startTime = clock();
 		int x = read(new_socket,buffer,1024);
-		std::cout << buffer << x << " " << " is read by server...............................................\n";
+		//std::cout << buffer << x << " " << " is read by server...............................................\n";
 		std::string send_buffer(buffer);
 		present = search(hash_server,send_buffer);
 
@@ -45,7 +48,7 @@ void * threadFunc(void * socket)
 		if(present.empty())
 		{
 
-			   printf("not present in server cache\n");
+			   //printf("not present in server cache\n");
 			   Dest_port = turn_clientmode_on_for_root(buffer, ROOT_PORT);
 			   //cout << Dest_port << " before send\n";
 
@@ -55,13 +58,10 @@ void * threadFunc(void * socket)
                     present = turn_clientmode_on(buffer, Dest_port);
 		
 			         //cout << present <<  " is return by com or in server\n";
-			        if(present != "N")
-			   		hash_server.insert(std::make_pair(buffer, present));
-			        if(send(new_socket,present.c_str(),1024, 0)==-1)
-                    {
-         		 			printf("\nsend failed in resolver\n");
-         		 
-         		    }
+			        	
+			        send(new_socket,present.c_str(),1024, 0);
+					float secsElapsed = (float)(clock() - startTime)/CLOCKS_PER_SEC;
+    				std::cout << secsElapsed*1000 << endl;
 				
                 }
 
@@ -72,31 +72,31 @@ void * threadFunc(void * socket)
                  	//sleep(0.1);
                     //cout << "\nnot a valid domain\n";
                     
-                    int temp = write(new_socket,present.c_str(),1024);
-                    if(temp==-1)
-                    {
-         		 			printf("\nsend failed in resolver\n");
-                    		strerror(errno);
-         		 			// cout << "an error: << strerror(errno) <<  "\n";
+                    write(new_socket,present.c_str(),1024);
+                    float secsElapsed1 = (float)(clock() - startTime)/CLOCKS_PER_SEC;
+    				std::cout << secsElapsed1*1000 << endl;
 
-         		 
-         		    }
-                 
                     //cout << "\nafter send\n";
 				}		
 
-			}
+		}
 			else
 			{
 				
 
-			    std::cout << "\n IP returned from server cache";
+			    //std::cout << "\n IP returned from server cache";
 			    send_to_client = &present[0]; 
 				send(new_socket,send_to_client , 1024, 0 );
-				printf("IP returned from server cache\n");
+				float secsElapsed2 = (float)(clock() - startTime)/CLOCKS_PER_SEC;
+    			std::cout << secsElapsed2*1000 << endl;
+				//printf("IP returned from server cache\n");
 			}
 
 			close(new_socket);
+			//shutdown(new_socket,SHUT_RDWR);
+			
+			//float secsElapsed2 = (float)(clock() - startTime)/CLOCKS_PER_SEC;
+    		//std::cout << secsElapsed2*1000 << endl;
 }
 
 int main(int argc, char const *argv[])
@@ -113,10 +113,10 @@ int main(int argc, char const *argv[])
     int rc; 
 	insert_in_hash(hash_server,file);
 
-	cout << "values in hashmap\n";
-	for(unordered_map<std::string,std::string>::iterator it = hash_server.begin(); it != hash_server.end(); ++it) {
+	//cout << "values in hashmap\n";
+	//for(unordered_map<std::string,std::string>::iterator it = hash_server.begin(); it != hash_server.end(); ++it) {
  
-        cout <<"value in hash\n" << it->first << " " << it->second;}
+        //cout <<"value in hash\n" << it->first << " " << it->second;}
 
 	int server_fd, valread;
 	struct sockaddr_in address;
@@ -147,7 +147,7 @@ int main(int argc, char const *argv[])
 		perror("bind failed");
 		exit(EXIT_FAILURE);
 	}
-	if (listen(server_fd, 50) < 0)
+	if (listen(server_fd, 100000) < 0)
 	{
 		perror("listen");
 		exit(EXIT_FAILURE);

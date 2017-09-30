@@ -30,25 +30,27 @@ void * threadFunc(void * socket)
         present = search(hash_in,send_buffer);
         if(present.empty())
        	    present = "N";     
-        cout << present << " after search results in .in server\n";
+        //cout << present << " after search results in .in server\n";
         char * send_to_server = &present[0];
         send(new_socket,send_to_server,1024, 0);
         //memset(buffer,'\0',sizeof(buffer));
     }   
 
-    close(new_socket); 
+    close(new_socket);
+    //shutdown(new_socket,SHUT_RDWR); 
+    
 
 }
 
 int main(int argc, char const *argv[])
 {
     
-    const char * file = (char*) malloc(1024*sizeof(char));
+    const char *file = (char*) malloc(1024*sizeof(char));
     file = "insert_in.txt";
     insert_in_hash(hash_in,file);
-    cout << "values in hashmap\n";
-    for(unordered_map<std::string,std::string>::iterator it = hash_in.begin(); it != hash_in.end(); ++it) {
-        cout <<"value in hash\n" << it->first << " " << it->second;}
+    //cout << "values in hashmap\n";
+    //for(unordered_map<std::string,std::string>::iterator it = hash_in.begin(); it != hash_in.end(); ++it) {
+      //  cout <<"value in hash\n" << it->first << " " << it->second;}
 
     pthread_t pth;
     int rc; 
@@ -82,7 +84,7 @@ int main(int argc, char const *argv[])
         perror("bind failed");
         exit(EXIT_FAILURE);
     }
-    if (listen(server_fd, 50) < 0)
+    if (listen(server_fd, 100000) < 0)
     {
         perror("listen");
         exit(EXIT_FAILURE);

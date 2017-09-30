@@ -20,48 +20,55 @@ using namespace std;
 
 
 #define PORT 8080
-#define NUM 5
 
-FILE * file2;
+int count = 0;
+
+char url[11][100] ={
+"www.c.d.com",
+"www.asd.com",
+"www.helloe.com",
+"www.hellof.com",
+"www.hellog.com",
+"www.helloh.com",
+"www.helloe.in",
+"www.iitb.ac.in",
+"www.cse.iitb.ac.in",
+"www.asdf.in",
+"www.fg.ina"};
 
 void * threadfunc( void * threadid)
 {
 
-    std::cout << "\n\n\n hello.......\n";
+    //std::cout << "\n\n\n hello......." << count << "\n";
     int thread = *(int*)(threadid);
     char  * url_search  = (char *)malloc (1024 * sizeof(char));
     char read_buffer[1024] = {0};
     char line[1024] = {0};
     int sock = client_initialise(PORT);
-    int i1,x;
-    url_search = (char *)malloc(50*sizeof(char));
-    fgets ( line, sizeof(line), file2);
-            
-    for( i1 =0;i1<strlen(line)-1;i1++) 
-
-            url_search[i1] = line[i1];
-
-    url_search[i1] = '\0';
-    cout << url_search;
-    send(sock,url_search ,1024, 0);
-    std::cout << "\n msg sent by client\n";
-    while(read(sock, read_buffer,1024)<0);
-
-    //cout << read_buffer << " after read \n";
-
+    clock_t startTime = clock();
+    send(sock,url[count],1024, 0);
+    while(read(sock,read_buffer,1024)<0);
+    float secsElapsed = (float)(clock() - startTime)/CLOCKS_PER_SEC;
+    std::cout << secsElapsed*1000 << " " << thread << endl;
+/*
     if(!strcmp(read_buffer,"N"))
         
-        std::cout << url_search << " is not a valid url\n";
+        std::cout << thread << ": " << url[count] << " is not a valid url\n";
 
     else if(!strcmp(read_buffer,"D"))
         
-        std::cout << url_search << " is not a valid domain\n";
+        std::cout << thread << ": " <<  url[count] << " is not a valid domain\n";
 
     else
       
-        std::cout << read_buffer <<  " is the ip address for " << url_search << endl;
+        std::cout << thread << ": " <<  read_buffer <<  " is the ip address for " << url[count] << endl;
+*/
+    count++;
+    if(count > 10) count = 0;
 
     close(sock);
+    shutdown(sock,SHUT_RDWR);
+    
 
 }
   
@@ -69,16 +76,26 @@ int main(int argc, char const *argv[])
 {
     int i;
     int * i1 = (int *)malloc(sizeof *i1);
-    file2 = fopen ( "search.txt", "r" );
     pthread_t pth;
-    for(i=0 ; i<=NUM ; i++)
+    int experiment = 0;
+    int num = atoi(argv[1]);
+    for(long long int j =0 ;j < 50 ;j++)
+    {
+    cout << experiment << endl;
+    for(i=0 ; i<num; i++)
     {
         *i1 = i;
+
         if(pthread_create(&pth,NULL,threadfunc,(void *)i1)<0)
             std::cout << "thread is not created\n";
         
-        sleep(2);
-    }
+    
+      //sleep(1); 
+    } 
+    sleep(1);
+    experiment++;
+    count = 0;
+}
 
 
    pthread_exit(NULL);

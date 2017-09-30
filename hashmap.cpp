@@ -72,10 +72,11 @@ void insert_in_hash(unordered_map <std::string,std::string> &hashmap, const char
 
 		std::string ip_insert1(ip_insert);
 
-		//cout << typeid(url_insert1).name() << typeid(ip_insert1).name();
+		//cout << url_insert1 << " " << ip_insert1 << endl;
 
 		if(hashmap.insert(std::make_pair(url_insert1, ip_insert1)).second == false)
-			printf("insertion failed\n");
+			//{
+			printf("insertion failed\n"); //cout << url_insert1 << "insertion failed " << ip_insert1 << endl;}
 
 		it = hashmap.begin();
 		//cout << "hash key" << it->first;
@@ -94,7 +95,7 @@ string search (unordered_map <std::string, std::string> hashmap, std::string url
 	if(hashmap.find(url) == hashmap.end())
 	{
 		printf("data not present\n");
-		return NULL;
+		return "";
 	}
 		
 

@@ -36,11 +36,11 @@ void * threadFunc(void * socket)
                 
         //cout << "in the loop\n"; 
         int x = read(new_socket, buffer,1024);
-        printf("%s after search results in .com server\n",buffer);
+        //printf("%s after search results in .com server\n",buffer);
         std::string send_buffer(buffer);
         present = search(hash_com,send_buffer);
         if(present.empty())
-       	present = "N";
+       	present = "";
         //cout << buffer << " after search results in .in server\n";
         char * send_to_server = &present[0];
         send(new_socket,send_to_server,1024, 0);
@@ -48,6 +48,8 @@ void * threadFunc(void * socket)
      }
 
     close(new_socket);
+    //shutdown(new_socket,SHUT_RDWR);
+    
  }
 
 int main(int argc, char const *argv[])
@@ -60,9 +62,9 @@ int main(int argc, char const *argv[])
     int rc; 
 
     insert_in_hash(hash_com,file);
-    cout << "values in hashmap\n";
-    for(unordered_map<std::string,std::string>::iterator it = hash_com.begin(); it != hash_com.end(); ++it) {
-        cout <<"value in hash\n" << it->first << " " << it->second;}
+    //cout << "values in hashmap\n";
+    //for(unordered_map<std::string,std::string>::iterator it = hash_com.begin(); it != hash_com.end(); ++it) {
+      //  cout <<"value in hash\n" << it->first << " " << it->second;}
 
     int server_fd, new_socket, valread,*new_sock;
     struct sockaddr_in address;
@@ -93,7 +95,7 @@ int main(int argc, char const *argv[])
         perror("bind failed");
         exit(EXIT_FAILURE);
     }
-    if (listen(server_fd, 50) < 0)
+    if (listen(server_fd, 100000) < 0)
     {
         perror("listen");
         exit(EXIT_FAILURE);
