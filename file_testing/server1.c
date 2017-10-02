@@ -22,7 +22,11 @@ void * threadFunc(void * socket)
         while(read( new_socket , buffer, 1024)<0);
         send(new_socket , "hello", 1024 , 0 );
         printf("Hello message sent\n");
+        free(buffer);
+        free(socket);
         close(new_socket);
+        pthread_exit(NULL);
+       
 }
 
 
@@ -35,9 +39,7 @@ int main(int argc, char const *argv[])
     int rc; 
     int server_fd, new_socket,*new_sock, valread;
     int addrlen = sizeof(address);
-    int count = 0;
-    char buffer[1024] = {0};
-    char *hello = "Hello from server";
+
       
     // Creating socket file descriptor
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0)
@@ -86,10 +88,11 @@ int main(int argc, char const *argv[])
         if(new_socket>0)
         {
             
-            
             new_sock = (int*)malloc(sizeof *new_sock);
             *new_sock = new_socket;
-            rc=pthread_create(&pth,NULL,threadFunc,(void *)new_sock);  
+            rc=pthread_create(&pth,NULL,threadFunc,(void *)new_sock); 
+            if(rc == 0)
+            pthread_detach(pth); 
         }
 
     }

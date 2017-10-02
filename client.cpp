@@ -24,17 +24,17 @@ using namespace std;
 int count = 0;
 
 char url[11][100] ={
-"www.c.d.com",
-"www.asd.com",
-"www.helloe.com",
-"www.hellof.com",
-"www.hellog.com",
-"www.helloh.com",
-"www.helloe.in",
-"www.iitb.ac.in",
-"www.cse.iitb.ac.in",
-"www.asdf.in",
-"www.fg.ina"};
+"www.samsung.com",
+"www.samsung.com",
+"www.samsung.com",
+"www.samsung.com",
+"www.samsung.com",
+"www.samsung.com",
+"www.samsung.com",
+"www.samsung.com",
+"www.samsung.com",
+"www.samsung.com",
+"www.samsung.com"};
 
 void * threadfunc( void * threadid)
 {

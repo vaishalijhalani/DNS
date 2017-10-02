@@ -164,10 +164,15 @@ int main(int argc, char const *argv[])
 		{
 
             std::cout << "\ncreating new thread....\n";
+             //pthread_attr_t attr; // thread attribute
+// set thread detachstate attribute to DETACHED 
+            //pthread_attr_init(&attr);
+            //pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
 			new_sock = (int*)malloc(sizeof *new_sock);
             *new_sock = new_socket;
             rc=pthread_create(&pth,NULL,threadFunc,(void *)new_sock);    
-        
+        	if(rc == 0)
+        		pthread_detach(pth);
 	
 			
 		}
