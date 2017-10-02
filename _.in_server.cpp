@@ -21,24 +21,20 @@ void * threadFunc(void * socket)
  
     for(int i = 0 ; i < iterate ; i++)
     {
-        //cout << "in the loop";
-        //memset(buffer,'\0',sizeof(buffer));
-        //cout << "before reading buffer";
+
         int x = read(new_socket, buffer,1024);
         cout << buffer << endl;
         std::string send_buffer(buffer);
         present = search(hash_in,send_buffer);
         if(present.empty())
        	    present = "N";     
-        //cout << present << " after search results in .in server\n";
         char * send_to_server = &present[0];
         send(new_socket,send_to_server,1024, 0);
-        //memset(buffer,'\0',sizeof(buffer));
+        
     }   
 
     close(new_socket);
-    //shutdown(new_socket,SHUT_RDWR); 
-    
+
 
 }
 
@@ -84,7 +80,7 @@ int main(int argc, char const *argv[])
         perror("bind failed");
         exit(EXIT_FAILURE);
     }
-    if (listen(server_fd, 100000) < 0)
+    if (listen(server_fd, SOMAXCONN) < 0)
     {
         perror("listen");
         exit(EXIT_FAILURE);

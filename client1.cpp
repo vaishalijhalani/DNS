@@ -46,11 +46,11 @@ void * threadfunc( void * threadid)
     clock_t startTime = clock();
     float start = ((float)startTime)/CLOCKS_PER_SEC;
     cout << start << " starttime\n";
+    int sock = client_initialise(PORT);
     while(1)
     { 
 
         //cout << "inside loop\n";
-        int sock = client_initialise(PORT);
         char  * url_search  = (char *)malloc (1024 * sizeof(char));
         char read_buffer[1024] = {0};
         char line[1024] = {0};
@@ -60,11 +60,13 @@ void * threadfunc( void * threadid)
         cout << secsElapsed << " while running\n";
         float time1 = (float)thread[1];
         if(secsElapsed > time1 )
-           {std::cout << secsElapsed << " " << time1 <<  " " <<thread[0] <<" break " << endl; break;}
+        {
+            std::cout << secsElapsed << " " << time1 <<  " " <<thread[0] <<" break " << endl; 
+            break;
+        }
 
         count++;
         if(count > 10) count = 0;
-        close(sock);
         //shutdown(sock,SHUT_RDWR);
 
     }
@@ -83,6 +85,7 @@ void * threadfunc( void * threadid)
 */
     //close(sock);
    // shutdown(sock,SHUT_RDWR);
+    close(sock);
     
 
 }

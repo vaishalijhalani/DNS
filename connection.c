@@ -1,9 +1,18 @@
-#include <bits/stdc++.h>
-#include <map>
-#include "connection.h"
-#include "hashmap.h"
 
-using namespace std;
+#include <stdlib.h>
+#include <stdio.h>
+
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <unistd.h>
+#include <errno.h>
+#include <arpa/inet.h> 
+#include "connection.h"
 
 
 
@@ -33,7 +42,7 @@ int  client_initialise(int port)
         
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
-        cout << "\n Socket creation error \n";
+        printf("\n Socket creation error \n");
         return -1;
     }
   
@@ -45,13 +54,13 @@ int  client_initialise(int port)
     // Convert IPv4 and IPv6 addresses from text to binary form
     if(inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr)<=0) 
     {
-        cout << "\nInvalid address/ Address not supported \n";
+        printf("\nInvalid address/ Address not supported \n");
         return -1;
     }
   
     if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
     {
-        cout << "\nConnection Failed \n";
+        printf("\nConnection Failed \n");
         return -1;
     }
 
@@ -73,11 +82,11 @@ int turn_clientmode_on_for_root(char *buffer, int port)
     char * read_buffer = (char*) malloc(1024*sizeof(char));
     int i , j;
 
-    //cout << buffer <<  " turn client mode on" << endl;
+    //printf("%s turn client mode on",buffer);
 
     for(i = (strlen(buffer)-1) ; i>0 ; i--)
     	if(buffer[i] == '.') break;
-    //cout << i << " is index before com\n";
+    //printf("%d is index before com\n", i);
 
     final_buffer[0] = 'w';final_buffer[1] = 'w'; final_buffer[2] = 'w';
     for(j = 3; buffer[i] != '\0' ; j++,i++ )
@@ -85,16 +94,14 @@ int turn_clientmode_on_for_root(char *buffer, int port)
 
 	final_buffer[j] = '\0';
 
-    //cout << final_buffer << " turn client mode on";
+    //printf("%s turn client mode on",final_buffer);
     send(sock,final_buffer ,100, 0 );
     while(read(sock,read_buffer,1024)<0);
-    //printf("%s\n",read_buffer );
-    //cout << read_buffer <<  " send by rootserver\n";
+    printf("%s\n",read_buffer );
+    //printf("%s send by rootserver\n",read_buffer);
     int Dest_port = atoi(read_buffer);
     //turnon_client_mode(Dest_port);
     close(sock);
-    //shutdown(sock,SHUT_RDWR);
-    
     return Dest_port;
 }
 
@@ -117,7 +124,7 @@ char * turn_clientmode_on(char *buffer, int port)
     int sock = client_initialise(port);
 
     int dot[10], dot_index = 0;
-    printf("%s turn client mode on",buffer);
+    //printf("%s turn client mode on",buffer);
 
     for(i = (strlen(buffer)-1) ; i>0 ; i--)
     {
@@ -152,12 +159,12 @@ char * turn_clientmode_on(char *buffer, int port)
         //printf("\n%s turn client mode on\n",final_buffer);
 
         if(send(sock,final_buffer ,1024, 0 )==-1)
-        {
+            {
 
-         		 printf("\nsend failed in resolver while sending to other server\n");
+         		 printf("\nsend failed in resolver\n");
          		 //return NULL;
 
-        }
+         	}
 
         //printf("data sent");
         read(sock,read_buffer,1024);
@@ -166,7 +173,5 @@ char * turn_clientmode_on(char *buffer, int port)
     }
     
     close(sock);
-    //shutdown(sock, SHUT_RDWR);
-    
     return read_buffer;
 }

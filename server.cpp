@@ -29,74 +29,68 @@ unordered_map<std::string, std::string> hash_server;
 
 void * threadFunc(void * socket)
 {  
-		int Dest_port;
 		int new_socket = *(int*)socket;
+		int x;
 		char * buffer = (char*) malloc(1024*sizeof(char));
-		char * send_to_client = (char*) malloc(1024*sizeof(char));
-		std::string present(1024,0);
-	    //buffer.reserve(1024);
-	    //send_buffer.reserve(1024);
-	    present.reserve(1024);
-
-	    clock_t startTime = clock();
-		int x = read(new_socket,buffer,1024);
-		//std::cout << buffer << x << " " << " is read by server...............................................\n";
-		std::string send_buffer(buffer);
-		present = search(hash_server,send_buffer);
 
 
-		if(present.empty())
-		{
+	    while((x = read(new_socket,buffer,1024))>0)
+	    {
 
-			   //printf("not present in server cache\n");
-			   Dest_port = turn_clientmode_on_for_root(buffer, ROOT_PORT);
-			   //cout << Dest_port << " before send\n";
+	    		
+	    		int Dest_port;
+				char * send_to_client = (char*) malloc(1024*sizeof(char));
+				std::string present(1024,0);
+	    		present.reserve(1024);
+	    		cout << buffer << " read by server\n";
+				std::string send_buffer(buffer);
+				present = search(hash_server,send_buffer);
 
-				if(Dest_port != 0)
-	  			{
-		     	   
-                    present = turn_clientmode_on(buffer, Dest_port);
-		
-			         //cout << present <<  " is return by com or in server\n";
-			        	
-			        send(new_socket,present.c_str(),1024, 0);
-					float secsElapsed = (float)(clock() - startTime)/CLOCKS_PER_SEC;
-    				std::cout << secsElapsed*1000 << endl;
-				
-                }
 
-				else if (Dest_port == 0)
+				if(present.empty())
 				{
-				    present = "D";
-				    
-                 	//sleep(0.1);
-                    //cout << "\nnot a valid domain\n";
-                    
-                    write(new_socket,present.c_str(),1024);
-                    float secsElapsed1 = (float)(clock() - startTime)/CLOCKS_PER_SEC;
-    				std::cout << secsElapsed1*1000 << endl;
 
-                    //cout << "\nafter send\n";
-				}		
+					    Dest_port = turn_clientmode_on_for_root(buffer, ROOT_PORT);
+
+						if(Dest_port != 0)
+			  			{
+				     	   
+		                    present = turn_clientmode_on(buffer, Dest_port);
+					        send(new_socket,present.c_str(),1024, 0);
+							//float secsElapsed = (float)(clock() - startTime)/CLOCKS_PER_SEC;
+		    				//std::cout << secsElapsed*1000 << endl;
+						
+		                }
+
+						else if (Dest_port == 0)
+						{
+						    present = "D";
+		                    
+		                    write(new_socket,present.c_str(),1024);
+		                    //float secsElapsed1 = (float)(clock() - startTime)/CLOCKS_PER_SEC;
+		    				//std::cout << secsElapsed1*1000 << endl;
+
+						}		
+
+				}
+				
+				else
+				{
+
+					    send_to_client = &present[0]; 
+						send(new_socket,send_to_client , 1024, 0 );
+						//float secsElapsed2 = (float)(clock() - startTime)/CLOCKS_PER_SEC;
+		    			//std::cout << secsElapsed2*1000 << endl;
+
+				}
+
+				memset(&buffer[0], 0, sizeof(buffer));
 
 		}
-			else
-			{
-				
 
-			    //std::cout << "\n IP returned from server cache";
-			    send_to_client = &present[0]; 
-				send(new_socket,send_to_client , 1024, 0 );
-				float secsElapsed2 = (float)(clock() - startTime)/CLOCKS_PER_SEC;
-    			std::cout << secsElapsed2*1000 << endl;
-				//printf("IP returned from server cache\n");
-			}
-
-			close(new_socket);
-			//shutdown(new_socket,SHUT_RDWR);
 			
-			//float secsElapsed2 = (float)(clock() - startTime)/CLOCKS_PER_SEC;
-    		//std::cout << secsElapsed2*1000 << endl;
+		close(new_socket);
+
 }
 
 int main(int argc, char const *argv[])
@@ -147,7 +141,7 @@ int main(int argc, char const *argv[])
 		perror("bind failed");
 		exit(EXIT_FAILURE);
 	}
-	if (listen(server_fd, 100000) < 0)
+	if (listen(server_fd, SOMAXCONN) < 0)
 	{
 		perror("listen");
 		exit(EXIT_FAILURE);

@@ -11,59 +11,48 @@
 #include <errno.h>
 #include <arpa/inet.h> 
 #include <pthread.h>
-#include <iostream>
-#include <unordered_map>
+#include "trie.h"
 #include "connection.h"
-#include "hashmap.h"
-
-using namespace std;
 #define PORT 9092
 
-unordered_map<std::string, std::string> hash_com;
+struct dnsnode* root_com;
 
 void * threadFunc(void * socket)
 {  
-	char buffer[1024] = {0};
-    std::string present;
-    present.reserve(1024);
+	char buffer[1024] = {0}, send_buffer[1024] = {0};
+    char * present = (char*) malloc(1024*sizeof(char));
     int new_socket = *(int*)socket;
     read(new_socket, buffer,1024);
     int iterate = atoi(buffer);
-    //cout << iterate << endl;
+            //printf("%d\n",iterate);
     buffer[0] ='\0';
     for(int i = 0 ; i < iterate ; i++)
     {
-        //cout << "in the loop\n"; 
+                //printf("in the loop\n");
+                 
         int x = read(new_socket, buffer,1024);
-        //printf("%s after search results in .com server\n",buffer);
-        std::string send_buffer(buffer);
-        present = search(hash_com,send_buffer);
-        if(present.empty())
-       	present = "";
-        //cout << buffer << " after search results in .in server\n";
-        char * send_to_server = &present[0];
-        send(new_socket,send_to_server,1024, 0);
+        printf("%s after search results in .com server\n",buffer);
+        present = search(root_com,buffer);
+        if(!present)
+       	present = "N";
+                 //printf("%s after search results in .in server\n",buffer);
+        send(new_socket,present,1024, 0);
 
      }
 
     close(new_socket);
-    //shutdown(new_socket,SHUT_RDWR);
-    
  }
 
 int main(int argc, char const *argv[])
 {
     
-    
-    const char * file = (char*) malloc(1024*sizeof(char));
-    file = "insert_com.txt";
-    pthread_t pth;
-    int rc; 
+    //char buffer[1024] = {0};
 
-    insert_in_hash(hash_com,file);
-    //cout << "values in hashmap\n";
-    //for(unordered_map<std::string,std::string>::iterator it = hash_com.begin(); it != hash_com.end(); ++it) {
-      //  cout <<"value in hash\n" << it->first << " " << it->second;}
+     pthread_t pth;
+    int rc; 
+    root_com  = newnode();
+
+    insert_in_tree(root_com,"insert_com.txt");
 
     int server_fd, new_socket, valread,*new_sock;
     struct sockaddr_in address;
@@ -94,7 +83,7 @@ int main(int argc, char const *argv[])
         perror("bind failed");
         exit(EXIT_FAILURE);
     }
-    if (listen(server_fd, SOMAXCONN) < 0)
+    if (listen(server_fd, 50) < 0)
     {
         perror("listen");
         exit(EXIT_FAILURE);
@@ -112,14 +101,13 @@ int main(int argc, char const *argv[])
 
         if(new_socket>0)
         {
-        	
-            new_sock = (int *)malloc(sizeof *new_sock);
-            *new_sock = new_socket;
-            rc=pthread_create(&pth,NULL,threadFunc,(void *)new_sock);	
+        	new_sock = malloc(sizeof *new_sock);
+         *new_sock = new_socket;
+         rc=pthread_create(&pth,NULL,threadFunc,(void *)new_sock);	
 
  	      
-        }
-    }
 
-    return 0;
+        }
+}
+     return 0;
 }
