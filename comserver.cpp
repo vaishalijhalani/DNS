@@ -23,14 +23,14 @@ unordered_map<std::string, std::string> hash_com;
 
 void * threadFunc(void * socket)
 {  
-	char buffer[1024] = {0};
+	char *buffer = (char*) malloc(1024*sizeof(char));
     std::string present;
     present.reserve(1024);
     int new_socket = *(int*)socket;
     read(new_socket, buffer,1024);
     int iterate = atoi(buffer);
     //cout << iterate << endl;
-    buffer[0] ='\0';
+
     for(int i = 0 ; i < iterate ; i++)
     {
         cout << "in the loop\n"; 
@@ -45,6 +45,7 @@ void * threadFunc(void * socket)
 
      }
 
+    free(buffer);
     free(socket);
     close(new_socket);
     pthread_exit(NULL);

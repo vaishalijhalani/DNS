@@ -25,12 +25,13 @@ unordered_map <std::string, std::string> hash_root;
 void * threadFunc(void * socket)
 {  
 
-	char buffer[1024] = {0}, send_buffer1[1024] = {0};
+	
     int dest_port;
-    //char * present = (char*) malloc(1024*sizeof(char));
+    char *buffer = (char*) malloc(1024*sizeof(char));
+    char *send_buffer1 = (char*) malloc(1024*sizeof(char));
     std::string present(1024,0);
     int new_socket = *(int*)socket;
-    buffer[0] = '\0';
+
 	int x = read(new_socket, buffer,1024);
 	//printf("%s is the read data by root\n",buffer);
 	std::string send_buffer(buffer);
@@ -48,6 +49,8 @@ void * threadFunc(void * socket)
     puts(send_buffer1);
     send(new_socket,send_buffer1,1024, 0);
     
+    free(buffer);
+    free(send_buffer1);
     free(socket);
     close(new_socket);
     pthread_exit(NULL);

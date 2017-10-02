@@ -85,10 +85,11 @@ void * threadFunc(void * socket)
 				}
 
 				memset(&buffer[0], 0, sizeof(buffer));
+				free(send_to_client);
 
 		}
 
-			
+		free(buffer);
 		free(socket);
 		close(new_socket);
 		pthread_exit(NULL);
@@ -163,11 +164,7 @@ int main(int argc, char const *argv[])
 		if(new_socket > 0 )
 		{
 
-            std::cout << "\ncreating new thread....\n";
-             //pthread_attr_t attr; // thread attribute
-// set thread detachstate attribute to DETACHED 
-            //pthread_attr_init(&attr);
-            //pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+  
 			new_sock = (int*)malloc(sizeof *new_sock);
             *new_sock = new_socket;
             rc=pthread_create(&pth,NULL,threadFunc,(void *)new_sock);    
