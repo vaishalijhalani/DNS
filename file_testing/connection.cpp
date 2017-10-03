@@ -159,9 +159,9 @@ char * turn_clientmode_on(char *buffer, int port)
 
         }
 
-        printf("data sent");
+        //printf("data sent");
         read(sock,read_buffer,1024);
-        printf("%s send by server\n",read_buffer);
+        //printf("%s send by inserver\n",read_buffer);
 
     }
     

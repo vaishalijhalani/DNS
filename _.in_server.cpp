@@ -33,7 +33,9 @@ void * threadFunc(void * socket)
         
     }   
 
+    free(socket);
     close(new_socket);
+    pthread_exit(NULL);
 
 
 }
@@ -109,6 +111,7 @@ int main(int argc, char const *argv[])
 
     }
 
+    pthread_exit(NULL);
     return 0;
 
 }

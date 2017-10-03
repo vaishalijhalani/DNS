@@ -89,7 +89,9 @@ void * threadFunc(void * socket)
 		}
 
 			
+		free(socket);
 		close(new_socket);
+		pthread_exit(NULL);
 
 }
 
@@ -160,6 +162,7 @@ int main(int argc, char const *argv[])
 	   
 		if(new_socket > 0 )
 		{
+
             std::cout << "\ncreating new thread....\n";
 			new_sock = (int*)malloc(sizeof *new_sock);
             *new_sock = new_socket;
@@ -170,6 +173,6 @@ int main(int argc, char const *argv[])
 		}
 }
 
-	pthread_exit(NULL);
+	
 	return 0;
 }

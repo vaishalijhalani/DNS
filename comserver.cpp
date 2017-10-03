@@ -33,20 +33,21 @@ void * threadFunc(void * socket)
     buffer[0] ='\0';
     for(int i = 0 ; i < iterate ; i++)
     {
-        //cout << "in the loop\n"; 
-        int x = read(new_socket, buffer,1024);
-        //printf("%s after search results in .com server\n",buffer);
+        cout << "in the loop\n"; 
+        while(read(new_socket, buffer,1024)<0);
+        printf("%s after search results in .com server\n",buffer);
         std::string send_buffer(buffer);
         present = search(hash_com,send_buffer);
         if(present.empty())
        	present = "";
-        //cout << buffer << " after search results in .in server\n";
         char * send_to_server = &present[0];
         send(new_socket,send_to_server,1024, 0);
 
      }
 
+    free(socket);
     close(new_socket);
+    pthread_exit(NULL);
     //shutdown(new_socket,SHUT_RDWR);
     
  }
@@ -120,6 +121,7 @@ int main(int argc, char const *argv[])
  	      
         }
     }
+
 
     return 0;
 }
