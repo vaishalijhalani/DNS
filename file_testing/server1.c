@@ -14,6 +14,18 @@
 #include <pthread.h>
 #define PORT 8080
 
+void * threadFunc(void * socket)
+{  
+        int new_socket = *(int*)socket;
+        int x;
+        char * buffer = (char*) malloc(1024*sizeof(char));
+        while(read( new_socket , buffer, 1024)<0);
+        send(new_socket , "hello", 1024 , 0 );
+        printf("Hello message sent\n");
+        close(new_socket);
+}
+
+
 
 int main(int argc, char const *argv[])
 {
@@ -73,10 +85,11 @@ int main(int argc, char const *argv[])
 
         if(new_socket>0)
         {
-            while(read( new_socket , buffer, 1024)<0);
-            send(new_socket , "hello", 1024 , 0 );
-            printf("Hello message sent\n");
-            close(new_socket);
+            
+            
+            new_sock = (int*)malloc(sizeof *new_sock);
+            *new_sock = new_socket;
+            rc=pthread_create(&pth,NULL,threadFunc,(void *)new_sock);  
         }
 
     }

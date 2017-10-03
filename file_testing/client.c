@@ -17,7 +17,7 @@
 int main(int argc, char const *argv[])
 {
 
-clock_t startTime = clock();
+    clock_t startTime = clock();
     float start = ((float)startTime)/CLOCKS_PER_SEC;
  
    while(1){
