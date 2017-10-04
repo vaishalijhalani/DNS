@@ -94,7 +94,8 @@ int turn_clientmode_on_for_root(char *buffer, int port)
     //turnon_client_mode(Dest_port);
     close(sock);
     //shutdown(sock,SHUT_RDWR);
-    
+
+    free(final_buffer);
     return Dest_port;
 }
 
@@ -166,7 +167,7 @@ char * turn_clientmode_on(char *buffer, int port)
     }
     
     close(sock);
-    //shutdown(sock, SHUT_RDWR);
-    
+
+    free(final_buffer);
     return read_buffer;
 }
