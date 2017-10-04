@@ -12,6 +12,7 @@
 #include <arpa/inet.h> 
 #include <pthread.h>
 #include <iostream>
+#include <vector>
 //#include <unordered_map>
 #include "connection.h"
 #include "hashmap.h"
@@ -40,28 +41,31 @@ char url[11][100] ={
 void * threadfunc( void * threadid)
 {
 
-    //std::cout << "\n\n\n hello......." << count << "\n";
+    float response,avgresponse_time;
     int * thread = (int*)threadid;
-    //cout << thread[0] <<" " << thread[1] << " threadinput" << endl;
+    vector<pair<float, float> > latency;
+    float time1 = (float)thread[1];
+    int count = 0;
+    int sock = client_initialise(PORT);
     clock_t startTime = clock();
     float start = ((float)startTime)/CLOCKS_PER_SEC;
-    cout << start << " starttime\n";
-    int sock = client_initialise(PORT);
+
     while(1)
     { 
 
-        //cout << "inside loop\n";
         char  * url_search  = (char *)malloc (1024 * sizeof(char));
         char read_buffer[1024] = {0};
         char line[1024] = {0};
+        clock_t measure1  = clock();
         send(sock,url[count],1024, 0);
         while(read(sock,read_buffer,1024)<0);
+        clock_t measure2  = clock();
+        latency.push_back(make_pair((float)measure1,(float)measure2));
         float secsElapsed = ((float)clock())/CLOCKS_PER_SEC - start;
-        cout << secsElapsed << " while running\n";
+        //cout << secsElapsed << " while running\n";
         float time1 = (float)thread[1];
         if(secsElapsed > time1 )
         {
-            std::cout << secsElapsed << " " << time1 <<  " " <<thread[0] <<" break " << endl; 
             break;
         }
 
@@ -70,22 +74,16 @@ void * threadfunc( void * threadid)
         //shutdown(sock,SHUT_RDWR);
 
     }
-/*
-    if(!strcmp(read_buffer,"N"))
-        
-        std::cout << thread << ": " << url[count] << " is not a valid url\n";
 
-    else if(!strcmp(read_buffer,"D"))
-        
-        std::cout << thread << ": " <<  url[count] << " is not a valid domain\n";
+    for(vector<pair<float, float> >:: iterator iter = latency.begin(); (iter != latency.end()); ++iter)
+        response += ((iter->second)-(iter->first))/CLOCKS_PER_SEC;
 
-    else
-      
-        std::cout << thread << ": " <<  read_buffer <<  " is the ip address for " << url[count] << endl;
-*/
-    //close(sock);
-   // shutdown(sock,SHUT_RDWR);
+
+    cout << "\navg response time: " << response/(latency.size()) << endl;
+
+
     close(sock);
+
     
 
 }

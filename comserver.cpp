@@ -33,9 +33,9 @@ void * threadFunc(void * socket)
 
     for(int i = 0 ; i < iterate ; i++)
     {
-        cout << "in the loop\n"; 
+      
         while(read(new_socket, buffer,1024)<0);
-        printf("%s after search results in .com server\n",buffer);
+        
         std::string send_buffer(buffer);
         present = search(hash_com,send_buffer);
         if(present.empty())

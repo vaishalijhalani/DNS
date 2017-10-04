@@ -42,7 +42,7 @@ void * threadFunc(void * socket)
 				char * send_to_client = (char*) malloc(1024*sizeof(char));
 				std::string present(1024,0);
 	    		present.reserve(1024);
-	    		cout << buffer << " read by server\n";
+	
 				std::string send_buffer(buffer);
 				present = search(hash_server,send_buffer);
 

@@ -94,14 +94,14 @@ string search (unordered_map <std::string, std::string> hashmap, std::string url
 
 	if(hashmap.find(url) == hashmap.end())
 	{
-		printf("data not present\n");
+		
 		return "";
 	}
 		
 
 	else 
 	{
-		printf("data searched\n");
+		
 
 		return hashmap.find(url) -> second;
 	}

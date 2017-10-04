@@ -46,7 +46,6 @@ void * threadFunc(void * socket)
 
 
     snprintf (send_buffer1, sizeof(send_buffer1), "%d",dest_port);
-    puts(send_buffer1);
     send(new_socket,send_buffer1,1024, 0);
     
     free(buffer);

@@ -23,7 +23,6 @@ void * threadFunc(void * socket)
     {
 
         int x = read(new_socket, buffer,1024);
-        cout << buffer << endl;
         std::string send_buffer(buffer);
         present = search(hash_in,send_buffer);
         if(present.empty())

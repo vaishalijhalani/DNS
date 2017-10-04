@@ -117,7 +117,7 @@ char * turn_clientmode_on(char *buffer, int port)
     int sock = client_initialise(port);
 
     int dot[10], dot_index = 0;
-    printf("%s turn client mode on",buffer);
+
 
     for(i = (strlen(buffer)-1) ; i>0 ; i--)
     {
@@ -159,9 +159,9 @@ char * turn_clientmode_on(char *buffer, int port)
 
         }
 
-        printf("data sent");
+
         read(sock,read_buffer,1024);
-        printf("%s send by server\n",read_buffer);
+
 
     }
     
