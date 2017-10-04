@@ -21,16 +21,18 @@ using namespace std;
 pthread_mutex_t mtx = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
 
-queue <int> pipe;
+queue <int> p1;
 
 void * threadFunc(void * socket)
 {  
 
+while(1)
+{
         pthread_mutex_lock(&mtx);
-        if(pipe.empty())
-            pthread_cond_wait(& cond, & mutex); 
-        int new_socket = pipe.front();
-        pipe.pop();
+        if(p1.empty())
+            pthread_cond_wait(& cond, & mtx); 
+        int new_socket = p1.front();
+        p1.pop();
         pthread_mutex_unlock(&mtx);
         int x;
         char * buffer = (char*) malloc(1024*sizeof(char));
@@ -40,6 +42,7 @@ void * threadFunc(void * socket)
         free(buffer);
         free(socket);
         close(new_socket);
+}
        
 }
 
@@ -103,8 +106,8 @@ int main(int argc, char const *argv[])
         if(new_socket>0)
         {
         
-            pipe.push(new_socket);
-            if(!pipe.empty())
+            p1.push(new_socket);
+            if(!p1.empty())
                 pthread_cond_signal(&cond);
            
         }

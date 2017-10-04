@@ -27,6 +27,7 @@ int count = 0;
 vector<float> avg_res;
 vector<int> avg_throughput;
 pthread_mutex_t mutex;
+int flag = 1;
 
 char url[11][100] ={
 "www.c.d.com",
@@ -51,13 +52,12 @@ void * threadfunc( void * threadid)
     float time1 = (float)thread[1];
     int count1 = 0;
     int sock = client_initialise(PORT);
-    clock_t startTime = clock();
-    float start = ((float)startTime)/CLOCKS_PER_SEC;
 
-    while(1)
+
+    while(flag)
     { 
 
-        char  * url_search  = (char *)malloc (1024 * sizeof(char));
+        
         char read_buffer[1024] = {0};
         char line[1024] = {0};
         clock_t measure1  = clock();
@@ -68,14 +68,6 @@ void * threadfunc( void * threadid)
         count1++;
         if(count1%50 == 0)
         latency.push_back(make_pair((float)measure1,(float)measure2));
-        float secsElapsed = ((float)clock())/CLOCKS_PER_SEC - start;
-        //cout << secsElapsed << " while running\n";
-        float time1 = (float)thread[1];
-        if(secsElapsed > time1 )
-        {
-            break;
-        }
-
         count++;
         if(count > 10) count = 0;
         //shutdown(sock,SHUT_RDWR);
@@ -88,13 +80,12 @@ void * threadfunc( void * threadid)
     float temp = response/latency.size();
     int temp2 = throughput/time1;
 
-    //cout << temp << " " << temp2 << endl;
+    cout << temp << " " << temp2 << endl;
 
     pthread_mutex_lock(&mutex);
     avg_res.push_back(temp);
     avg_throughput.push_back(temp2);
     pthread_mutex_unlock(&mutex);
-
 
     close(sock);
 
@@ -129,6 +120,10 @@ int main(int argc, char const *argv[])
 
     }
 
+    
+    sleep(atoi(argv[2]));
+
+    flag = 0;
         
     for( int i1 = 0; i1 < num; i1++ ) 
     {
@@ -153,7 +148,7 @@ int main(int argc, char const *argv[])
     for(vector<int>:: iterator iter = avg_throughput.begin(); (iter != avg_throughput.end()); ++iter)
         throughput_ans += *iter; 
 
-    throughput_ans /= (avg_throughput.size());
+    
     
     cout << "\n\n average throughput: " << throughput_ans << endl;
 

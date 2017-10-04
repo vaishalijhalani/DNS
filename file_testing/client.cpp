@@ -9,11 +9,13 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <unistd.h>
+#include <iostream>
 #include <errno.h>
 #include <arpa/inet.h> 
 #include <pthread.h>
 #define PORT 8080
 
+using namespace std;
 int flag = 1;
 
 void * threadfunc( void * threadid)
@@ -21,6 +23,7 @@ void * threadfunc( void * threadid)
 
     //std::cout << "\n\n\n hello......." << count << "\n";
     int * thread = (int*)threadid;
+    int x =0;
  
    while(flag)
    {
@@ -28,7 +31,7 @@ void * threadfunc( void * threadid)
     struct sockaddr_in address;
     int sock = 0, valread;
     struct sockaddr_in serv_addr;
-    char *hello = "Hello from client";
+    //char *hello = "Hello from client";
     char buffer[1024] = {0};
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
@@ -56,7 +59,8 @@ void * threadfunc( void * threadid)
 
  
         clock_t first = clock();
-        send(sock , hello , strlen(hello) , 0 );
+        send(sock , "hello" , 10 , 0 );
+        x++;
         valread = read( sock , buffer, 1024);
         float secsElapsed = clock();
         printf("%f \n",(secsElapsed-first));
@@ -64,6 +68,8 @@ void * threadfunc( void * threadid)
     close(sock);
 
     }
+
+    cout << "no of request" << x << endl;
 }
 
 int main(int argc, char const *argv[])
