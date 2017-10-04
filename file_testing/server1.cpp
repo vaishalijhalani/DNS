@@ -23,28 +23,48 @@ pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
 
 queue <int> p1;
 
-void * threadFunc(void * socket)
-{  
-
-while(1)
+/*void * worker_thread(void * socket)
 {
-        pthread_mutex_lock(&mtx);
-        if(p1.empty())
-            pthread_cond_wait(& cond, & mtx); 
-        int new_socket = p1.front();
-        p1.pop();
-        pthread_mutex_unlock(&mtx);
-        int x;
+
         char * buffer = (char*) malloc(1024*sizeof(char));
+        int new_socket = *(int*)socket;
         while(read( new_socket , buffer, 1024)<0);
         send(new_socket , "hello", 1024 , 0 );
         printf("Hello message sent\n");
         free(buffer);
         free(socket);
         close(new_socket);
+        pthread_exit(NULL);
+
 }
+
+
+void * Handler(void * temp)
+{  
+    int count = 0;
+    int rc = 0;
+    int * new_sock = (int*)malloc(sizeof *new_sock);
+    pthread_t worker[30];
+
+    while(1)
+    {
+        if(count<=30 && (!p1.empty()))
+        {
+            cout <<"hello hendler\n";
+            int socket = p1.front();
+            *new_sock = socket;
+            p1.pop();
+            //rc = pthread_create(&worker[count],NULL,worker_thread,(void*) new_sock);
+            //if(rc == 0)
+              //  pthread_detach(worker[count]); 
+            count++;
+            cout << socket << endl;
+        }
+
        
-}
+    }
+       
+}*/
 
 
 
@@ -52,7 +72,7 @@ int main(int argc, char const *argv[])
 {
     struct sockaddr_in address;
     int opt = 1;
-    pthread_t pth[30];
+    pthread_t pth;
     int rc; 
     int server_fd, new_socket,*new_sock, valread;
     int addrlen = sizeof(address);
@@ -89,8 +109,8 @@ int main(int argc, char const *argv[])
         exit(EXIT_FAILURE);
     }
 
-    for(int i=0;i<30;i++)
-        pthread_create(&pth[i],NULL,threadFunc,NULL);
+    
+    //pthread_create(&pth,NULL,Handler,NULL);
 
     while(1)
     {
@@ -105,10 +125,8 @@ int main(int argc, char const *argv[])
 
         if(new_socket>0)
         {
-        
+            cout << new_socket << " pushing\n";
             p1.push(new_socket);
-            if(!p1.empty())
-                pthread_cond_signal(&cond);
            
         }
 
