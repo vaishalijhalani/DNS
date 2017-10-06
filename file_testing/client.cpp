@@ -60,16 +60,15 @@ void * threadfunc( void * threadid)
  
         clock_t first = clock();
         send(sock , "hello" , 10 , 0 );
-        x++;
-        valread = read( sock , buffer, 1024);
+        while(read( sock , buffer, 1024)<0);
         float secsElapsed = clock();
-        printf("%f \n",(secsElapsed-first));
+        printf("%f %s \n",(secsElapsed-first),buffer);
 
-    close(sock);
+        close(sock);
 
     }
 
-    cout << "no of request" << x << endl;
+    //cout << "no of request" << x << endl;
 }
 
 int main(int argc, char const *argv[])
@@ -91,6 +90,7 @@ int main(int argc, char const *argv[])
         //clock_t startTime1 = clock();
             num1[0]=j;
             num1[1]=atoi(argv[2]);
+
 
             if((errCode[j] = pthread_create(&pth[j], NULL, threadfunc, num1 )) != 0)
                 printf( "thread is not created\n");
