@@ -13,7 +13,6 @@
 #include <pthread.h>
 #include <iostream>
 #include <vector>
-//#include <unordered_map>
 #include "connection.h"
 #include "hashmap.h"
 

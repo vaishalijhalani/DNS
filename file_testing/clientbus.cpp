@@ -58,7 +58,7 @@ void * threadfunc( void * threadid)
 
  
         clock_t first = clock();
-       // send(sock , "hello" , 10 , 0 );
+        //send(sock , "hello" , 10 , 0 );
         //while(read( sock , buffer, 1024)<0);
         float secsElapsed = clock();
         printf("\n %f %s %d \n",(secsElapsed-first),buffer, thread);
@@ -90,7 +90,6 @@ int main(int argc, char const *argv[])
      
         //clock_t startTime1 = clock();
             *i1 = j;
-            cout << *i1;
             if((errCode[j] = pthread_create(&pth[j], NULL, threadfunc, (void*)i1)) != 0)
                 printf( "thread is not created\n");
 

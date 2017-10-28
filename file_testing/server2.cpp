@@ -28,78 +28,44 @@ queue <int> p1;
 
 int count = 0;
 
-void * worker_thread(void * socket)
+void * worker_thread(void * temp)
 {
 
-
-        char * buffer = (char*) malloc(1024*sizeof(char));
-        int new_socket = *(int*)socket;
-        while(read( new_socket , buffer, 1024)<0);
-        if(send(new_socket,"hello" ,10, 0 )==-1)
-        {
-
-                 printf("\nsend failed in resolver while sending to other server\n");
-                 //return NULL;
-
-        }
-        
-        cout << buffer << endl;
-        printf("Hello message sent\n");
-        
-
-      //  pthread_mutex_lock(&count_dec);
-        if(count>0)count--;
-        //pthread_mutex_unlock(&count_dec);
-       
-
-        free(buffer);
-        close(new_socket);
-        pthread_detach(pthread_self());
-
-
-
-}
-
-
-void * Handler(void * temp)
-{  
-    
-    int rc = 0;
-    int * new_sock;
-    pthread_t worker;
-
+    int id = *(int*)temp;
 
     while(1)
     {
-       // pthread_mutex_lock(&handle);
-        if((count<=30) && (!p1.empty()))
-        {
-            
-            int socket = p1.front();
-            cout << " size of queue" << p1.size() << endl;
+
+            pthread_mutex_lock(&handle);
+            while(p1.empty())
+                pthread_cond_wait(&cond,&handle);
+
+            int new_socket = p1.front();
             p1.pop();
-           // pthread_mutex_unlock(&handle);        
-            *new_sock = socket;
+            cout << " size of queue" << p1.size() << endl;
+            pthread_mutex_unlock(&handle);
+
+            char * buffer = (char*) malloc(1024*sizeof(char));
+            while(read( new_socket , buffer, 1024)<0);
+            if(send(new_socket,"hello client" ,20, 0 )==-1)
+            {
+
+                     printf("\nsend failed in resolver while sending to other server\n");
+                     //return NULL;
+
+            }
             
-            rc = pthread_create(&worker,NULL,worker_thread,(void*) new_sock);
-            //if(rc == 0)
-               // pthread_detach(worker);
-
-          //  pthread_mutex_lock(&handle1);
-            count++;
-          //  pthread_mutex_unlock(&handle1);
+            cout << buffer << " " << id << endl;
             
-        }
+            free(buffer);
+            close(new_socket);
 
-       // else pthread_mutex_unlock(&handle);
 
-       
     }
 
-    
-    
-       
+
 }
+
 
 
 
@@ -108,6 +74,7 @@ int main(int argc, char const *argv[])
     struct sockaddr_in address;
     int opt = 1;
     pthread_t pth;
+    int * i1 = (int *)malloc(sizeof *i1);
     int rc; 
     int server_fd, new_socket,*new_sock, valread;
     int addrlen = sizeof(address);
@@ -145,7 +112,13 @@ int main(int argc, char const *argv[])
     }
 
     
-    pthread_create(&pth,NULL,Handler,NULL);
+    //pthread_create(&pth,NULL,Handler,NULL);
+
+    for(int k= 0;k < 50;k++)
+    {
+            *i1 = k;
+            pthread_create(&pth,NULL,worker_thread,(void*)i1);
+    }
 
     while(1)
     {
@@ -160,10 +133,10 @@ int main(int argc, char const *argv[])
 
         if(new_socket>0)
         {
-            //cout << new_socket << " pushing\n";
-           // pthread_mutex_lock(&mtx);
-            p1.push(new_socket);
-            //pthread_mutex_unlock(&mtx);
+           pthread_mutex_lock(&mtx);
+           p1.push(new_socket);
+           pthread_mutex_unlock(&mtx);
+           pthread_cond_signal(&cond);
            
         }
 
